@@ -38,7 +38,7 @@ const canisterEnvVariables = initCanisterEnv();
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-const frontendDirectory = "dfinity_reactJs_reactRouter_babel_assets";
+const frontendDirectory = "veta_assets";
 
 const asset_entry = path.join("src", frontendDirectory, "src", "index.html");
 

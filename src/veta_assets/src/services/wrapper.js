@@ -1,4 +1,4 @@
-import { dfinity_reactJs_reactRouter_babel as app } from "../../../declarations/dfinity_reactJs_reactRouter_babel";
+import { veta as app } from "../../../declarations/veta";
 
 export async function greet(name) {
     console.debug(name);
