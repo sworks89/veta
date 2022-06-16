@@ -1,53 +1,65 @@
 import Array "mo:base/Array";
 import HashMap "mo:base/HashMap";
-import StableHashMap "./StableHashMap";
 import Option "mo:base/Option";
 import Principal "mo:base/Principal";
 import Types "./types";
 
 module {
   type UserId = Types.UserId;
-  type UserData = Types.UserData;
+  type User = Types.User;
 
-  public class UserDb() {
+  public class UserDB() {
     func isEq(x: UserId, y: UserId): Bool { x == y };
 
-    let db = HashMap.HashMap<UserId, UserData>(1, isEq, Principal.hash);
+    let db = HashMap.HashMap<UserId, User>(1, isEq, Principal.hash);
 
-    public func createOrReturn(userId: UserId, username: Text) :  UserData {
-      let maybeUser = db.get(userId);
-      if (Option.isSome(maybeUser)) {
-        return Option.unwrap(maybeUser)
-      };
-      let userData = makeUserData(userId, username);
-      db.set(userId, userData);
-      return userData;
+    // public func create(userId: UserId, username: Text) :  User {
+    //   let maybeUser = db.get(userId);
+    //   if (Option.isSome(maybeUser)) {
+    //     return Option.unwrap(maybeUser)
+    //   };
+    //   let user = makeUser(userId, username);
+    //   db.put(userId, user);
+    //   return user;
+    // };
+
+    public func register(user: User) {
+      db.put(user.uid, createUser(user));
     };
 
-    public func update(userData: UserData) {
-      let userId: UserId = userData.id;
-      db.set(userId, userData);
+    public func update(user: User) {
+      let userId: UserId = user.uid;
+      db.put(userId, user);
     };
 
-    public func findById(userId: UserId): ?UserData {
+    public func findById(userId: UserId): ?User {
       db.get(userId)
     };
 
-    public func findByName(username: Text): [UserData] {
-      var users: [UserData] = [];
-      for ((id, userData) in db.iter()) {
-        if (userData.name == username) {
-          users := Array.append<UserData>(users, [userData]);
-        };
-      };
-      users
+    public func verify(uid: UserId) {
+			// let user = getUser(uid);
+			// if(user){
+			// 	user.verified := true;
+      // 	hashMap.put(uid, user);
+			// }
     };
 
+    // public func findByName(username: Text): [User] {
+    //   var users: [User] = [];
+    //   for ((id, user) in db.entries()) {
+    //     if (user.userName == username) {
+    //       users := Array.append<User>(users, [user]);
+    //     };
+    //   };
+    //   users
+    // };
+
     // Helpers.
-    func makeUserData(userId: UserId, username: Text): UserData {
+    func createUser(user: User): User {
       {
-        id = userId;
-        name = username;
+				uid = user.uid;
+        userName = user.userName;
+        verified = false;
       }
     };
 

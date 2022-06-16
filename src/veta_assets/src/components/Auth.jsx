@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { AuthClient } from "@dfinity/auth-client"
+import { veta } from "../../../declarations/veta";
 import dfinityLogo from "../images/logo.png"
 
 // Note: This is just a basic example to get you started
@@ -28,17 +29,23 @@ function Auth() {
     const { identity, principal } = await new Promise((resolve, reject) => {
       client.login({
         identityProvider: "https://identity.ic0.app",
-        onSuccess: () => {
+        onSuccess: async () => {
           const identity = client.getIdentity()
-          const principal = identity.getPrincipal().toString()
+          const principal = identity.getPrincipal();
           resolve({ identity, principal })
+          let vetaProfile = {
+            uid: principal,
+            userName: 'Anon',
+            verified: false,
+          }
+          await veta.registerUser(vetaProfile);
           navigate('/dashboard')
         },
         onError: reject,
       })
     })
     setSignedIn(true)
-    setPrincipal(principal)
+    setPrincipal(principal.toString())
   }
 
   const signOut = async () => {
