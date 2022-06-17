@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
 import useVetaIdentity from '../contexts/VetaIdentityContext';
-import { AppBar, Toolbar, Button, Typography, Card, Avatar } from '@mui/material'
+import { AppBar, Toolbar, Button, Typography, Card, Avatar, Link} from '@mui/material'
 import { Auth } from "./Auth"
 import { veta } from "../../../declarations/veta";
 import logo from "../images/veta-logo.svg"
@@ -13,6 +12,19 @@ import background4 from "../images/background4.jpg"
 import thanhPic from "../images/thanh.png"
 import markPic from "../images/mark.jpeg"
 import { Handshake, HowToReg, Sync, Insights, FactCheck, ConnectWithoutContact, Twitter, LinkedIn, GitHub } from "@mui/icons-material";
+
+function Copyright(props) {
+  return (
+    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+      {'Copyright © '}
+      <Link color="inherit" href="https://mui.com/">
+        Veta
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 export function Intro() {
   const { signInByICProvider, signOut, principal, client, vetaWallet } = useVetaIdentity();
@@ -72,7 +84,7 @@ export function Intro() {
 						sx={{
               position: 'relative',
               left: '200px',
-              fontWeight: '400'
+              fontWeight: '500'
 						}}>
 						OWN YOUR DATA
             <span style={{height: '5px',
@@ -103,7 +115,7 @@ export function Intro() {
 						sx={{
               position: 'relative',
               left: '34%',
-              fontWeight: '400',
+              fontWeight: '500',
               width: '500px'
 						}}>
 						CONNECT YOUR IDENTITY TO THE DIGITAL WORLD
@@ -186,7 +198,11 @@ export function Intro() {
           component='h2'
           variant='h2'
           sx={{
-
+            position: 'relative',
+            top: '24vh',
+            left: '34%',
+            fontWeight: '500',
+            width: '360px'
           }}>
           AN ECOSYSTEM OF TRUST
         </Typography>
@@ -239,8 +255,8 @@ export function Intro() {
           </Card>
         </div>
       </section>
-      <footer>
-
+      <footer style={{height: '300px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.87)', padding: '24px'}}>
+        <Copyright sx={{ pt: 4, color: '#fff' }} />
       </footer>
     </>
   )
