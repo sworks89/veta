@@ -1,5 +1,9 @@
 import * as React from 'react';
 import axios from "axios";
+import { useLocation } from "react-router-dom"
+import useVetaIdentity from '../contexts/VetaIdentityContext';
+import { veta } from "../../../declarations/veta";
+import { Principal } from '@dfinity/principal';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -23,6 +27,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
 import logo from "../images/veta-logo-white.svg";
 import { Paper, Card } from '@mui/material';
+import QRCode from 'qrcode.react';
+
 
 function Copyright(props) {
   return (
@@ -73,6 +79,10 @@ const settings = ['Profile', 'Logout'];
 
 function Dashboard() {
 //   const [open, setOpen] = React.useState(true);
+  const { signInByICProvider, signOut, principal, client, vetaWallet } = useVetaIdentity();
+  // const {state} = useLocation();
+  // const { uid } = state; 
+  const [userData, setUserData] = React.useState();
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -93,6 +103,12 @@ function Dashboard() {
         console.log(resp)
     });
   }
+
+  const getUserData = async () => {
+    const res = await veta.getUser(Principal.fromText(principal));
+    console.log(res)
+    setUserData(res);
+  };
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -191,9 +207,14 @@ function Dashboard() {
                 <Card>
                     <span>Onboard now to get started. </span>
                     <Button onClick={onboard}>KYC Onboarding</Button>
+                    <Button onClick={getUserData}>Get User Data</Button>
                 </Card>
                 <Card>
                 { kycUrl && <Onboard kycUrl={kycUrl}></Onboard>}
+                </Card>
+                <Card>
+                { userData && <span>{`${userData.uid.toString()} ${userData.userName} - verified: ${userData.verified}`}</span> }
+                <QRCode value="https://reactjs.org/" renderAs="canvas" />
                 </Card>
             </Paper>
             <Copyright sx={{ pt: 4 }} />

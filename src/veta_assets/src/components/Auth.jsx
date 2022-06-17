@@ -39,7 +39,7 @@ function Auth() {
             verified: false,
           }
           await veta.registerUser(vetaProfile);
-          navigate('/dashboard')
+          navigate('/dashboard', {state:{ uid: principal.toString()}});
         },
         onError: reject,
       })
