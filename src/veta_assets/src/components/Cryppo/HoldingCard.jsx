@@ -6,11 +6,11 @@ import { styled, useTheme } from '@mui/material/styles';
 import { Avatar, Box, Grid, Menu, MenuItem, Typography } from '@mui/material';
 
 // project imports
-import MainCard from '../ui-component/cards/MainCard';
-import SkeletonEarningCard from '../ui-component/cards/Skeleton/EarningCard';
+import MainCard from '../../ui-component/cards/MainCard';
+import SkeletonEarningCard from '../../ui-component/cards/Skeleton/EarningCard';
 
 // assets
-import EarningIcon from '../assets/images/icons/earning.svg';
+import EarningIcon from '../../assets/images/icons/earning.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import GetAppTwoToneIcon from '@mui/icons-material/GetAppOutlined';
@@ -56,7 +56,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
-const EarningCard = ({ isLoading }) => {
+const HoldingCard = ({ isLoading, assets = [] }) => {
 	const theme = useTheme();
 
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -142,7 +142,7 @@ const EarningCard = ({ isLoading }) => {
 									<Grid item>
 										<Typography
 											sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
-											$500.00
+											{assets.length}
 										</Typography>
 									</Grid>
 									<Grid item>
@@ -168,7 +168,7 @@ const EarningCard = ({ isLoading }) => {
 										fontWeight: 500,
 										color: theme.palette.secondary[200],
 									}}>
-									Total Earning
+									Total Crypto Holding
 								</Typography>
 							</Grid>
 						</Grid>
@@ -179,8 +179,8 @@ const EarningCard = ({ isLoading }) => {
 	);
 };
 
-EarningCard.propTypes = {
+HoldingCard.propTypes = {
 	isLoading: PropTypes.bool,
 };
 
-export default EarningCard;
+export default HoldingCard;

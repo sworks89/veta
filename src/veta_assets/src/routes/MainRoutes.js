@@ -1,12 +1,12 @@
-import Intro from '../components/Intro';
 import MinimalLayout from '../layout/MinimalLayout'; 
+import Home from '../views/Home';
 
 const MainRoutes = {
 	element: <MinimalLayout />,
 	children: [
 		{
 			path: '/',
-			element: <Intro />,
+			element: <Home />,
 		},
 		{
 			path: 'about',

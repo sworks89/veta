@@ -13,56 +13,106 @@ import TotalIncomeDarkCard from '../../components/TotalIncomeDarkCard';
 import TotalIncomeLightCard from '../../components/TotalIncomeLightCard';
 import TotalGrowthBarChart from '../../components/TotalGrowthBarChart';
 import useMainLayout from '../../layout/MainLayout/MainLayoutContext';
-
+import TransactionsCard from '../../components/Cryppo/TransactionsCard';
+import HoldingCard from '../../components/Cryppo/HoldingCard';
+import * as CryppoService from '../../services/CryppoServices';
+import AssetsCard from '../../components/Cryppo/AssetsCard';
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
 const CryppoPlatformPage = () => {
 	const { gridSpacing, customization } = useMainLayout();
 	const [isLoading, setLoading] = useState(true);
+	const [transactions, setTransactions] = useState([]);
+	const [data, setData] = useState({});
 	useEffect(() => {
+		fetchTransactions();
 		setLoading(false);
 	}, []);
 
+	const fetchTransactions = async () => {
+		const transactions = await CryppoService.getAllTransactions();
+
+		setTransactions(transactions || []);
+		let symbolsList = [];
+		const assetsByTransactions = {};
+
+		transactions.forEach((transaction) => {
+			const { symbol } = transaction;
+			// Existing symbol
+			if (!assetsByTransactions[symbol]) {
+				symbolsList.push(symbol.toUpperCase());
+				assetsByTransactions[symbol] = [];
+			}
+			assetsByTransactions[symbol].push(transaction);
+		});
+
+		// Generate assets
+		const assetsList = [];
+		Object.keys(assetsByTransactions).forEach((key) => {
+			const trans = assetsByTransactions[key];
+			const assetItem = generateAssetData({ ...trans[0], transactions: trans });
+			assetsList.push(assetItem);
+		});
+
+		// Sort symbols
+		symbolsList = symbolsList.sort();
+
+		setData({
+			transactions,
+			symbolsList,
+			assets: assetsByTransactions,
+			assetCount: symbolsList.length,
+		});
+
+		setLoading(true);
+	};
+
 	return (
-		// <MainCard title='Your Profile'>
-		// 	<Typography variant='body2'>Profile Page</Typography>
-		// </MainCard>
-		<Grid container spacing={gridSpacing}>
-			<Grid item xs={12}>
-				<Grid container spacing={gridSpacing}>
-					<Grid item lg={4} md={6} sm={6} xs={12}>
-						<EarningCard isLoading={isLoading} />
+		<>
+			<Typography variant='h2' component='h2' sx={{ marginBottom: gridSpacing }}>
+				Cryppo
+			</Typography>
+
+			<Grid container spacing={gridSpacing}>
+				<Grid item xs={12} sm={6} md={8}>
+					<Grid container spacing={gridSpacing}>
+						<Grid item sm={4} xs={12}>
+							<HoldingCard isLoading={isLoading} assets={data.assets} />
+						</Grid>
+						<Grid item md={4} sm={6} xs={12}>
+							<HoldingCard isLoading={isLoading} assets={data.assets} />
+						</Grid>
+						<Grid item md={4} sm={6} xs={12}>
+							<HoldingCard isLoading={isLoading} assets={data.assets} />
+						</Grid>
+						<Grid item xs={12}>
+							<TransactionsCard
+								isLoading={isLoading}
+								gridSpacing={gridSpacing}
+								transactions={data.transactions}
+							/>
+						</Grid>
 					</Grid>
-					<Grid item lg={4} md={6} sm={6} xs={12}>
-						<TotalOrderLineChartCard isLoading={isLoading} />
+				</Grid>
+
+				<Grid item xs={12} sm={6} md={4}>
+					<Grid container spacing={gridSpacing}>
+						<Grid item xs={12}>
+							<TotalOrderLineChartCard isLoading={isLoading} />
+						</Grid>
+						{/* <Grid item sm={6} xs={12} md={6} lg={12}>
+						<TotalIncomeDarkCard isLoading={isLoading} />
 					</Grid>
-					<Grid item lg={4} md={12} sm={12} xs={12}>
-						<Grid container spacing={gridSpacing}>
-							<Grid item sm={6} xs={12} md={6} lg={12}>
-								<TotalIncomeDarkCard isLoading={isLoading} />
-							</Grid>
-							<Grid item sm={6} xs={12} md={6} lg={12}>
-								<TotalIncomeLightCard isLoading={isLoading} />
-							</Grid>
+					<Grid item sm={6} xs={12} md={6} lg={12}>
+						<TotalIncomeLightCard isLoading={isLoading} />
+					</Grid> */}
+						<Grid item xs={12}>
+							<AssetsCard isLoading={isLoading} gridSpacing={gridSpacing} assets={data.assets} />
 						</Grid>
 					</Grid>
 				</Grid>
 			</Grid>
-			<Grid item xs={12}>
-				<Grid container spacing={gridSpacing}>
-					<Grid item xs={12} md={8}>
-						<TotalGrowthBarChart
-							isLoading={isLoading}
-							gridSpacing={gridSpacing}
-							customization={customization}
-						/>
-					</Grid>
-					<Grid item xs={12} md={4}>
-						<PopularCard isLoading={isLoading} gridSpacing={gridSpacing} />
-					</Grid>
-				</Grid>
-			</Grid>
-		</Grid>
+		</>
 	);
 };
 
