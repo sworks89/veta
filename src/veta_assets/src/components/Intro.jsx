@@ -12,6 +12,7 @@ import background4 from "../images/background4.jpg"
 import thanhPic from "../images/thanh.png"
 import markPic from "../images/mark.jpeg"
 import { Handshake, HowToReg, Sync, Insights, FactCheck, ConnectWithoutContact, Twitter, LinkedIn, GitHub } from "@mui/icons-material";
+import { width } from "@mui/system";
 
 function Copyright(props) {
   return (
@@ -98,14 +99,51 @@ const Intro = () => {
 					</Typography>
       </section>
       <section style={{ padding: '24px', height: '80vh', display: 'flex', flexDirection: 'column', color: '#000', backgroundImage: `url(${background2})`, backgroundSize: 'cover', backgroundPosition: 'center center' }}>
-        <Typography
-          component='h3'
-          variant='h3'
-          sx={{
-
-          }}>
-          WHAT IS VETA
-        </Typography>
+        <div>
+          <Typography
+            component='h3'
+            variant='h3'>
+            WHAT IS VETA
+          </Typography>
+          <Typography
+            component='h5'
+            variant='h5'>
+            <p>Veta is not just a dApp but an ecosystem. Veta aims to build the identity layer and an ecosystem of verifiable data. Veta enables self sovereign identity.</p>
+          </Typography>
+        </div>
+        <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'baseline'}}>
+            <div>
+              <Typography
+                component='h4'
+                variant='h4'>
+                Benefits
+              </Typography>
+              <Typography
+                component='h5'
+                variant='h5'>
+                <p>User have control of their data.</p>
+                <p>Incentivize all participating stakeholders within the Veta ecosystem.</p>
+                <p>Combat fraudulent and bad actors with verifiable data.</p>
+                <p>Support businesses succeed with data driven decisions.</p>
+              </Typography>
+            </div>
+            <div>
+              <Typography
+                component='h4'
+                variant='h4'>
+                Services
+              </Typography>
+              <Typography
+                component='h5'
+                variant='h5'>
+                <p>Data Sharing</p>
+                <p>Decentralized Voting</p>
+                <p>Surveys/Polls</p>
+                <p>KYC/AML Solutions</p>
+                <p>Data Aggregation</p>
+              </Typography>
+            </div>
+        </div>
       </section>
       <section style={{ height: '80vh', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', color: '#fff', backgroundImage: `url(${background4})`, backgroundSize: 'cover', backgroundPosition: 'center center' }}>
         {/* <img src={background1} style={{ width: '100%', position: 'absolute', top: '64px' }}/> */}
@@ -255,7 +293,7 @@ const Intro = () => {
           </Card>
         </div>
       </section>
-      <footer style={{height: '300px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.87)', padding: '24px'}}>
+      <footer style={{height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.87)', padding: '24px'}}>
         <Copyright sx={{ pt: 4, color: '#fff' }} />
       </footer>
     </>
