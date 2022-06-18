@@ -26,35 +26,35 @@ function Copyright(props) {
   );
 }
 
-export function Intro() {
-  const { signInByICProvider, signOut, principal, client, vetaWallet } = useVetaIdentity();
-  const [count, setCount] = useState()
-  const [profile, setProfile] = useState()
+const Intro = () => {
+	const { signInByICProvider, signOut, principal, client, vetaWallet } = useVetaIdentity();
+	const [count, setCount] = useState();
+	const [profile, setProfile] = useState();
 
-  const refreshCounter = async () => {
-    const res = await veta.getValue()
-    setCount(res.toString())
-  }
+	const refreshCounter = async () => {
+		const res = await veta.getValue();
+		setCount(res.toString());
+	};
 
-  const refreshProfile = async () => {
-    const res = await veta.find("mark")
-    setProfile(res.toString())
-  }
+	const refreshProfile = async () => {
+		const res = await veta.find('mark');
+		setProfile(res.toString());
+	};
 
-  const addCounter = async () => {
-    await veta.increment();
-    refreshCounter();
-  }
+	const addCounter = async () => {
+		await veta.increment();
+		refreshCounter();
+	};
 
-  const sign = async () => {
-    await veta.insert("mark",count,"Deira");
-    refreshProfile();
-  }
+	const sign = async () => {
+		await veta.insert('mark', count, 'Deira');
+		refreshProfile();
+	};
 
-  useEffect(() => {
-    refreshCounter()
-    refreshProfile()
-  }, [])
+	useEffect(() => {
+		refreshCounter();
+		refreshProfile();
+	}, []);
 
   return (
     <>
