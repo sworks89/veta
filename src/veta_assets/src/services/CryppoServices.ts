@@ -1,6 +1,12 @@
 import { cryppo } from '../../../declarations/cryppo';
 
-import { Portfolio, Portfolios, Transaction, Transactions, UID } from '../../../declarations/cryppo/cryppo.did';
+import {
+	Portfolio,
+	Portfolios,
+	Transaction,
+	Transactions,
+	UID,
+} from '../../../declarations/cryppo/cryppo.did';
 
 export const healthcheck = async () => {
 	// eslint-disable-next-line no-async-promise-executor
@@ -66,7 +72,7 @@ export const deletePortfolio = async (portfolioId: UID) => {
 export const getTransactions = async (portfolioId: UID) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const transactions = await crypto.getTransactions(portfolioId);
+			const transactions = await cryppo.getPortfolioTransactions(portfolioId);
 			resolve(transactions as Transactions);
 		} catch (error) {
 			console.error(error);
@@ -78,7 +84,7 @@ export const getTransactions = async (portfolioId: UID) => {
 export const addTransaction = async (transaction: Transaction) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			await crypto.addTransaction(transaction);
+			await cryppo.addTransaction(transaction);
 			resolve(transaction as Transaction);
 		} catch (error) {
 			console.error(error);
@@ -90,7 +96,7 @@ export const addTransaction = async (transaction: Transaction) => {
 export const updateTransaction = async (transaction: Transaction) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			await portfolio.updateTransaction(transaction);
+			await cryppo.updateTransaction(transaction);
 			resolve(transaction);
 		} catch (error) {
 			console.error(error);
@@ -102,7 +108,7 @@ export const updateTransaction = async (transaction: Transaction) => {
 export const deleteTransaction = async (transactionId: UID) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			await portfolio.deleteTransaction(transactionId);
+			await cryppo.deleteTransaction(transactionId);
 			resolve(true);
 		} catch (error) {
 			console.error(error);

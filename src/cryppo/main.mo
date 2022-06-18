@@ -7,7 +7,7 @@ import Text "mo:base/Text";
 import Database "database";
 import Types "types";
 
-actor Portfolio {
+shared({caller = owner}) actor class Cryppo() {
 	
 	// type Symbol = Types.Symbol;
 	type UID = Types.UID;
@@ -15,19 +15,24 @@ actor Portfolio {
 	type Portfolios = Types.Portfolios;
 	type Transaction = Types.Transaction;
 	type Transactions = Types.Transactions;
-
+	
 	var portfolioDb: Database.PortfolioDB = Database.PortfolioDB();
 	var transactionDb: Database.TransactionDB = Database.TransactionDB();
  
 
   // Healthcheck
-  public func healthcheck(): async Text { "Portfolio is healthy" };
+  public shared({caller}) func healthcheck(): async Text {
+		assert (owner == caller);
+ 		"Portfolio is healthy";
+	};
 
-  public query func getPortfolios(): async Portfolios {
+  public  shared query({caller})func getPortfolios(): async Portfolios {
+		assert (owner == caller);
 		portfolioDb.getAll();
   };
 
-  public query func getPortfolio(portfolioId: UID): async Portfolio {
+  public shared query({caller}) func getPortfolio(portfolioId: UID): async Portfolio {
+		assert (owner == caller);
 		let existing = portfolioDb.getById(portfolioId);
 		switch (existing) {
 			case (?existing) { existing };
@@ -42,43 +47,47 @@ actor Portfolio {
 		};
   };
 
-	public func createPortfolio(portfolio: Portfolio): async () {
-			portfolioDb.create(portfolio);
-		};
+	public shared({caller}) func createPortfolio(portfolio: Portfolio): async () {
+		assert (owner == caller);
+		portfolioDb.create(portfolio);
+	};
 
-  public func updatePortfolio(portfolio: Portfolio): async () {
-    // if(Utils.hasAccess(msg.caller, profile)) {
+  public shared({caller}) func updatePortfolio(portfolio: Portfolio): async () {
+		assert (owner == caller);
 		portfolioDb.update(portfolio);
-    // };
   };
 
-	public func deletePortfolio(portfolioId: UID): async () {
-    // if(Utils.hasAccess(msg.caller, profile)) {
-      portfolioDb.delete(portfolioId);
-    // };
+	public shared({caller}) func deletePortfolio(portfolioId: UID): async () {
+    assert (owner == caller);
+		portfolioDb.delete(portfolioId);
   };
 	
 
 	/* Get all transactions */
-	public func getPortfolioTransactions(portfolioId: Types.UID) : async Transactions {
+	public shared({caller}) func getPortfolioTransactions(portfolioId: Types.UID) : async Transactions {
+		assert (owner == caller);
 		transactionDb.getAllByPortfolioId(portfolioId);
 	};
 	
-	public func getTransactions() : async Transactions {
+	public shared({caller}) func getTransactions() : async Transactions {
+		assert (owner == caller);
 		transactionDb.getAll();
 	};
  /* Add Transaction */
-	public func addTransaction (transaction: Transaction): async () {
+	public shared({caller}) func addTransaction (transaction: Transaction): async () {
+		assert (owner == caller);
 		transactionDb.create(transaction);
 	};
 
 	/* Update/Edit Transaction */
-	public func updateTransaction (transaction: Transaction): async () {
+	public shared({caller}) func updateTransaction (transaction: Transaction): async () {
+		assert (owner == caller);
   	transactionDb.update(transaction);
 	};
 
 	/* Delete Transaction */
-	public func deleteTransaction (transactionId: UID): async () {
+	public shared({caller}) func deleteTransaction (transactionId: UID): async () {
+		assert (owner == caller);
   	transactionDb.delete(transactionId);
 	};
 };

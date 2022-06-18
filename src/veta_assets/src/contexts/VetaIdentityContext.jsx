@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useContext, useRef, createContext, FC } from 'react';
+import { useState, useEffect, useContext, useRef, createContext, FC } from 'react';
 // import AppLoader from '../Components/AppLoader/AppLoader';
 import { AuthClient } from '@dfinity/auth-client';
 import { veta } from '../../../declarations/veta';
 // import { Principal } from '@dfinity/principal';
-
 
 export const VetaIdentityContext = createContext({
 	principal: '',

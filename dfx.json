@@ -4,17 +4,17 @@
 			"main": "src/veta/main.mo",
 			"type": "motoko"
 		},
+		"cryppo": {
+			"main": "src/cryppo/main.mo",
+			"type": "motoko"
+		},
 		"veta_assets": {
-			"dependencies": ["veta"],
+			"dependencies": ["veta", "cryppo"],
 			"frontend": {
 				"entrypoint": "src/veta_assets/src/index.html"
 			},
 			"source": ["src/veta_assets/assets", "dist/veta_assets/"],
 			"type": "assets"
-		},
-		"cryppo": {
-			"main": "src/cryppo/main.mo",
-			"type": "motoko"
 		}
 	},
 	"defaults": {
