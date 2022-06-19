@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import { AppBar, Toolbar, Button, Typography, Box, Button } from '@mui/material';
 import { Auth } from './Auth';
 import { veta } from '../../../../declarations/veta';
-import Logo from '../../assets/images/veta-logo.svg';
-import DfinityLogo from '../../assets/images/infinity_logo.svg';
-import background1 from '../../assets/images/home/background1.jpg';
-import background2 from '../../assets/images/home/background2.png';
-import background3 from '../../assets/images/home/background3.jpg';
-import background4 from '../../assets/images/home/background4.jpg';
+import Logo from '../../_assets/images/veta-logo.svg';
+import DfinityLogo from '../../_assets/images/infinity_logo.svg';
+import background1 from '../../_assets/images/home/background1.jpg';
+import background2 from '../../_assets/images/home/background2.png';
+import background3 from '../../_assets/images/home/background3.jpg';
+import background4 from '../../_assets/images/home/background4.jpg';
 import useVetaIdentity from '../../contexts/VetaIdentityContext';
 
 const Home = () => {

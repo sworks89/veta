@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import useVetaIdentity from '../contexts/VetaIdentityContext';
 import { AppBar, Toolbar, Button, Typography, Card, Avatar, Link } from '@mui/material';
 import { veta } from '../../../declarations/veta';
-import VetaLogo from '../assets/images/veta-logo.svg';
-import DfinityLogo from '../assets/images/infinity_logo.svg';
-import background1 from '../assets/images/home/background1.jpg';
-import background2 from '../assets/images/home/background2.png';
-import background3 from '../assets/images/home/background3.jpg';
-import background4 from '../assets/images/home/background4.jpg';
-import thanhPic from '../assets/images/home/thanh.png';
-import markPic from '../assets/images/home/mark.jpeg';
+import VetaLogo from '../_assets/images/veta-logo.svg';
+import DfinityLogo from '../_assets/images/infinity_logo.svg';
+import background1 from '../_assets/images/home/background1.jpg';
+import background2 from '../_assets/images/home/background2.png';
+import background3 from '../_assets/images/home/background3.jpg';
+import background4 from '../_assets/images/home/background4.jpg';
+import thanhPic from '../_assets/images/home/thanh.png';
+import markPic from '../_assets/images/home/mark.jpeg';
 import {
 	Handshake,
 	HowToReg,
