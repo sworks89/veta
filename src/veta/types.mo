@@ -50,24 +50,24 @@ module Types {
     dataType: Text;
     dataContent: Text;
   }
-  type Transaction = {};
-  type TransactionRegistry = {
-    uid: Text;
-    transactionId: Text;
-    price?: Float;
-    needRequest: Bool;
-    verified: Bool;
-  }
-  type Profile = {
+  // type Transaction = {};
+  // type TransactionRegistry = {
+  //   uid: Text;
+  //   transactionId: Text;
+  //   price?: Float;
+  //   needRequest: Bool;
+  //   verified: Bool;
+  // }
+  // type Profile = {
 
-    registryId: Text;
-  };
-  type ProfileRegistry = {
-    uid: Text;
-    price?: Float;
-    needRequest: Bool;
-    verified: Bool;
-  }
+  //   registryId: Text;
+  // };
+  // type ProfileRegistry = {
+  //   uid: Text;
+  //   price?: Float;
+  //   needRequest: Bool;
+  //   verified: Bool;
+  // }
 }
 
 
