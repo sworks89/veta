@@ -1,4 +1,5 @@
 import Intro from '../components/Intro';
+import DataCenter from '../views/DataCenter';
 import MinimalLayout from '../layout/MinimalLayout'; 
 
 const MainRoutes = {
@@ -7,6 +8,10 @@ const MainRoutes = {
 		{
 			path: '/',
 			element: <Intro />,
+		},
+		{
+			path: '/center',
+			element: <DataCenter />,
 		},
 		{
 			path: 'about',

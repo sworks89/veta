@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react"
 import useVetaIdentity from '../contexts/VetaIdentityContext';
 import { AppBar, Toolbar, Button, Typography, Card, Avatar, Link} from '@mui/material'
-import { Auth } from "./Auth"
 import { veta } from "../../../declarations/veta";
-import logo from "../images/veta-logo.svg"
-import dfinityLogo from "../images/infinity_logo.svg"
+import VetaLogo from "../images/veta-logo.svg"
+import DfinityLogo from "../images/infinity_logo.svg"
 import background1 from "../images/background1.jpg"
 import background2 from "../images/background2.png"
 import background3 from "../images/background3.jpg"
@@ -12,7 +11,6 @@ import background4 from "../images/background4.jpg"
 import thanhPic from "../images/thanh.png"
 import markPic from "../images/mark.jpeg"
 import { Handshake, HowToReg, Sync, Insights, FactCheck, ConnectWithoutContact, Twitter, LinkedIn, GitHub } from "@mui/icons-material";
-import { width } from "@mui/system";
 
 function Copyright(props) {
   return (
@@ -68,17 +66,16 @@ const Intro = () => {
                 justifyContent: 'space-between',
                 backgroundColor: 'rgba(0, 0, 0, 0.87)',
                 color: '#fff',
-                padding: '0 24px'
+                padding: '10px 24px'
               }}>
-        <img src={logo} className="App-logo" alt="logo" />
+        <VetaLogo style={{ height: '45px'}}/>
         <Toolbar>{/* content */}</Toolbar>
         <Button variant='text' color='inherit' onClick={signInByICProvider}>
-          <img src={dfinityLogo} alt="logo" style={{ width: '24px', marginRight: '5px' }} />
+          <DfinityLogo style={{ width: '24px', marginRight: '5px' }}/>
           <strong className='align-self-end mt-1'>Login</strong>
         </Button>
       </AppBar>
       <section style={{ height: '80vh', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', color: '#fff', backgroundImage: `url(${background1})`, backgroundSize: 'cover' }}>
-        {/* <img src={background1} style={{ width: '100%', position: 'absolute', top: '64px' }}/> */}
         <Typography
 						component='h2'
 						variant='h2'
@@ -298,4 +295,6 @@ const Intro = () => {
       </footer>
     </>
   )
-}
+};
+
+export default Intro;
