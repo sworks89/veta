@@ -5,6 +5,7 @@ import MainLayout from '../layout/MainLayout';
 import { MainLayoutProvider } from '../layout/MainLayout/MainLayoutContext';
 import Loadable from '../ui-component/Loadable';
 import Dashboard from '../views/Dashboard'; 
+import HelpPage from '../views/Help';
 import CryppoPlatformPage from '../views/Platforms/Cryppo';
 import SocialNetworkPlatformPage from '../views/Platforms/SocialNetwork';
 import ProfilesPage from '../views/Profiles';
@@ -42,7 +43,7 @@ const DashboardRoutes = {
 		},
 		{
 			path: 'dashboard/help',
-			element: <SamplePage />,
+			element: <HelpPage />,
 		},
 		{
 			path: 'dashboard/platforms',

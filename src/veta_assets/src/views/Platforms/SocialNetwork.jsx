@@ -35,7 +35,7 @@ const SocialNetworkPlatformPage = () => {
 			</Typography>
 			<Grid container spacing={gridSpacing}>
 				{' '}
-				<Grid item xs={12} sm={6} md={8}>
+				<Grid item xs={12} sm={6} md={9}>
 					<Grid container spacing={gridSpacing}>
 						<Grid item xs={12} sm={4}>
 							<TotalIncomeDarkCard isLoading={isLoading} />
@@ -55,7 +55,18 @@ const SocialNetworkPlatformPage = () => {
 						<Grid item xs={12} sm={4}>
 							<TotalIncomeLightCard isLoading={isLoading} />
 						</Grid>{' '}
-						<Grid item xs={12} sm={6}>
+					</Grid>
+				</Grid>
+				<Grid item xs={12} sm={6} md={3}>
+					<Grid container spacing={gridSpacing}>
+						<Grid item xs={12}>
+							<TotalOrderLineChartCard isLoading={isLoading} />
+						</Grid>
+					</Grid>
+				</Grid>
+				<Grid item xs={12}>
+					<Grid container spacing={gridSpacing}>
+						<Grid item xs={12} sm={6} md={4} lg={3}>
 							<List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
 								<ListItem alignItems='flex-start'>
 									<ListItemText
@@ -115,8 +126,8 @@ const SocialNetworkPlatformPage = () => {
 									/>
 								</ListItem>
 							</List>
-						</Grid>{' '}
-						<Grid item xs={12} sm={6}>
+						</Grid>
+						<Grid item xs={12} sm={6} md={4} lg={3}>
 							<List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
 								<ListItem alignItems='flex-start'>
 									<ListItemText
@@ -191,14 +202,7 @@ const SocialNetworkPlatformPage = () => {
 								</ListItem>
 							</List>
 						</Grid>
-					</Grid>
-				</Grid>
-				<Grid item xs={12} sm={6} md={4}>
-					<Grid container spacing={gridSpacing}>
-						<Grid item xs={12}>
-							<TotalOrderLineChartCard isLoading={isLoading} />
-						</Grid>
-						<Grid item xs={12}>
+						<Grid item xs={12} sm={6} md={4} lg={3}>
 							<List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
 								<ListItem alignItems='flex-start'>
 									<ListItemText
