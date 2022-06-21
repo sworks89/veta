@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 // material-ui
 import { Typography, Button, TextField, Select, InputLabel, FormControl, MenuItem } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 // project imports
 import MainCard from '../../ui-component/cards/MainCard';
@@ -11,6 +12,7 @@ const DataCenter = () => {
     const [selectedPlatform, setSelectedPlatform] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedType, setSelectedType] = useState('');
+    const [selectedDate, setSelectedDate] = useState(null);
 
     const handlePlatformChange = (event) => {
         setSelectedPlatform(event.target.value);
@@ -82,7 +84,8 @@ const DataCenter = () => {
                         <MenuItem value={''}></MenuItem>
                     </Select>
                 </FormControl>
-                 <TextField id="platform-id" label="Standard" variant="standard" />
+                <TextField id="platform-id" label="User" variant="standard" />
+                <TextField id="platform-id" label="Data Content" variant="standard" />
                 <Button variant="contained">GENERATE</Button>
             </div>
         </div>
@@ -92,6 +95,25 @@ const DataCenter = () => {
             </Typography>
             <div>
                 <Button variant="contained">QUERY</Button>
+            </div>
+        </div>
+        <div>
+            <Typography variant="h3">
+                Validate Data
+            </Typography>
+            <div>
+                {/* <DatePicker
+                    label="Transaction Date"
+                    value={selectedDate}
+                    onChange={(newValue) => {
+                    setSelectedDate(newValue);
+                    }}
+                    renderInput={(params) => <TextField {...params} />}
+                /> */}
+                <TextField id="platform-id" label="Data Platform" variant="standard" />
+                <TextField id="platform-id" label="Data Owner" variant="standard" />
+                <TextField id="platform-id" label="Data Content" variant="standard" />
+                <Button variant="contained">Validate</Button>
             </div>
         </div>
     </MainCard>

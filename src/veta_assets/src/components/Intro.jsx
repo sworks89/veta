@@ -141,6 +141,40 @@ const Intro = () => {
               </Typography>
             </div>
         </div>
+        <div>
+          <Typography
+            component='h4'
+            variant='h4'>
+            Sample Use Cases
+          </Typography>
+          <Typography
+            component='h4'
+            variant='h4'>
+            <p>Real World Scenarios</p>
+          </Typography>
+          <Typography
+            component='h5'
+            variant='h5'>
+            <p>Job Application - Bob applies for a developer position and shares his professional profile with data from his Educational and Work credentials issued to him like a diploma, transcript of records, and a certification from his previouw employer. Alice the recruiter can view and verify these credentials easily thus giving Alice the confidence on her hiring decisions.</p>
+            <p>Travel - Alice an avid traveller arrived in the Bahamas, Bob the immigration offices requests for her covid vaccination. Alice shares her covid vaccination certificate issued to her by the clinic which can then be verified that Alice is indeed vaccinated and can enjoy her vacation.</p>
+            <p>Loan Application - Bob is an aspiring businessman who wants to apply for a loan to start a business, the loan officer requests for KYC and AML credentials along with his assets for collateral. Bob can share these data issued to him by his bank and crypto exchange platform he uses. The Loan Officer can now verify Bob's qualifications and issue a loan upon approval.</p>
+            <p>Smart Government -  Alice was fined for a traffic violation, the highway officer requests for Alice's drivers licence and car registration. Alice then shared both of these credentials from different government bodies issues to Alice.</p>
+          </Typography>
+          <Typography
+            component='h4'
+            variant='h4'>
+            <p>WEB 3.0 Scenarios</p>
+          </Typography>
+          <Typography
+            component='h5'
+            variant='h5'>
+            <p>Decentralized Identity - Bob is a very private person and is concerned about how his data is shared, with Veta's decentralized identifiers and credentials Bob can prove his identity without showing all his data.</p>
+            <p>Targeted Ads - Alice want to ensure that her product reaches her traget audience. With data attributed from the Veta ecosystem, advertisement services can utilize users' data to achieve target reach of potential customers.</p>
+            <p>Market / Product Research - Bob's company is planning to launch their new product. With data provided by Veta, Bob can now make data driven decisions regarding his product.</p>
+            <p>Seamless Data Sharing - Alice can login to multiple Web 3.0 platforms without filling up forms to register or checking out a product giving a more seamless web experience.</p>
+            <p>Decentralized Voting - A DAO is voting for a proposal specific to updates regarding a new law in the US, the DAO uses Veta's voting solutions to only get votes from qualified voters based on the criteria to decide the voting outcome.</p>
+          </Typography>
+        </div>
       </section>
       <section style={{ height: '80vh', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', color: '#fff', backgroundImage: `url(${background4})`, backgroundSize: 'cover', backgroundPosition: 'center center' }}>
         {/* <img src={background1} style={{ width: '100%', position: 'absolute', top: '64px' }}/> */}
