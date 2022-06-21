@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ButtonBase, Typography } from '@mui/material';
 
 // project imports 
-import Logo from '../../../assets/images/veta.svg';
+import Logo from '../../../_assets/images/veta.svg';
 import config from '../../../config';
 
 // ==============================|| MAIN LOGO ||============================== //

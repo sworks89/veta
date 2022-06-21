@@ -69,10 +69,22 @@ export const deletePortfolio = async (portfolioId: UID) => {
 	});
 };
 
-export const getTransactions = async (portfolioId: UID) => {
+export const getTransactionsByPortfolio = async (portfolioId: UID) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			const transactions = await cryppo.getPortfolioTransactions(portfolioId);
+			resolve(transactions as Transactions);
+		} catch (error) {
+			console.error(error);
+			reject(error);
+		}
+	});
+};
+
+export const getAllTransactions = async () => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const transactions = await cryppo.getTransactions();
 			resolve(transactions as Transactions);
 		} catch (error) {
 			console.error(error);

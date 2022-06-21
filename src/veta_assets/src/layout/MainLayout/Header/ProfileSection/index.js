@@ -33,8 +33,8 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import MainCard from '../../../../ui-component/cards/MainCard';
 import Transitions from '../../../../ui-component/extended/Transitions';
 import UpgradePlanCard from './UpgradePlanCard';
-import User1 from '../../../../../assets/images/users/user-round.svg';
-import InfinityLogo from '../../../../assets/images/infinity_logo.svg';
+import User1 from '../../../../_assets/images/users/user-round.svg';
+import InfinityLogo from '../../../../_assets/images/infinity_logo.svg';
 // assets
 import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
 import useMainLayout from '../../MainLayoutContext';
@@ -179,7 +179,7 @@ const ProfileSection = () => {
 															component='span'
 															variant='h4'
 															sx={{ fontWeight: 400, textTransform: 'capitalize' }}>
-															{vetaWallet.userName}
+															{vetaWallet.name}
 														</Typography>
 													</Stack>
 													<Typography variant='subtitle2'>
