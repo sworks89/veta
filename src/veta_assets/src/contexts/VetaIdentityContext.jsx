@@ -2,6 +2,8 @@ import { useState, useEffect, useContext, useRef, createContext, FC } from 'reac
 // import AppLoader from '../Components/AppLoader/AppLoader';
 import { AuthClient } from '@dfinity/auth-client';
 import { veta } from '../../../declarations/veta';
+import { vetawallet } from '../../../declarations/vetawallet';
+import { vetacenter } from '../../../declarations/vetacenter';
 // import { Principal } from '@dfinity/principal';
 
 export const VetaIdentityContext = createContext({
@@ -44,24 +46,18 @@ export const VetaIdentityProvider = (props) => {
 		});
 
 		setPrincipal(principal.toString());
+		// await vetacenter.registerUser(principal);
 		// Check if principal existed in VetaWallet
 		await handleVetaProfile(principal);
 	};
 
 	const handleVetaProfile = async (principal) => {
-		let vetaProfile = {
-			uid: principal,
-			userName: 'new user',
-			profilePhoto: '',
-			verified: false,
-		};
 		try {
-			vetaProfile = await veta.getUser(principal);
+			let vetaProfile = await vetawallet.getPersonalInformation(principal);
+			setVetaWallet(vetaProfile);
 		} catch (e) {
-			await veta.registerUser(vetaProfile);
+			console.log(e);
 		}
-
-		setVetaWallet(vetaProfile);
 	};
 
 	const signOut = async () => {

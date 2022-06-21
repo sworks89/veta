@@ -1,66 +1,62 @@
 import Array "mo:base/Array";
 import HashMap "mo:base/HashMap";
+import List "mo:base/List";
 import Option "mo:base/Option";
 import Principal "mo:base/Principal";
+import Text "mo:base/Text";
+import Time "mo:base/Time";
+
 import Types "./types";
 
 module {
   type UserId = Types.UserId;
   type User = Types.User;
+	type Data = Types.Data;
+  type DataCategory = Types.DataCategory;
 
-  public class UserDB() {
-    func isEq(x: UserId, y: UserId): Bool { x == y };
+  public class VetaWalletDB() {
 
-    let db = HashMap.HashMap<UserId, User>(1, isEq, Principal.hash);
 
-    // public func create(userId: UserId, username: Text) :  User {
-    //   let maybeUser = db.get(userId);
-    //   if (Option.isSome(maybeUser)) {
-    //     return Option.unwrap(maybeUser)
-    //   };
-    //   let user = makeUser(userId, username);
-    //   db.put(userId, user);
-    //   return user;
+    func isEq(x: Text, y: Text): Bool { x == y };
+
+    let db = HashMap.HashMap<Text, Data>(1, isEq, Text.hash);
+
+
+		// public func initPersonalInformation(user:User) {
+		// 	let newData: [Data] = createDefaultPersonalData(user);
+      
+    //   // for (data in newData) {       
+		// 			db.put(newData[0].id, newData[0]);   
+    //   // };
+		// };
+
+    // public func getPersonalInformation (id: Text) : ?Data {
+    //   db.get(id);
     // };
 
-    public func register(user: User) {
-      db.put(user.uid, createUser(user));
-    };
-
-    public func update(user: User) {
-      let userId: UserId = user.uid;
-      db.put(userId, user);
-    };
-
-    public func findById(userId: UserId): ?User {
-      db.get(userId)
-    };
-
-    public func verify(uid: UserId) {
-			// let user = getUser(uid);
-			// if(user){
-			// 	user.verified := true;
-      // 	hashMap.put(uid, user);
-			// }
-    };
-
-    // public func findByName(username: Text): [User] {
-    //   var users: [User] = [];
-    //   for ((id, user) in db.entries()) {
-    //     if (user.userName == username) {
-    //       users := Array.append<User>(users, [user]);
-    //     };
-    //   };
-    //   users
-    // };
 
     // Helpers.
     func createUser(user: User): User {
       {
 				uid = user.uid;
-        userName = user.userName;
         verified = false;
       }
+    };
+
+		func createDefaultPersonalData(user: User): Data {
+			var personal = List.nil<Data>();
+			var cat: DataCategory = #personal;
+			let personal : Data = {
+					id = "1";
+					uid = user.uid;
+					platformId = user.uid;
+					signature = "123";
+					date = Time.now();
+					dataCategory = cat;
+					dataType = "name";
+					dataContent = "New User";
+				};
+			personal;
     };
 
   }

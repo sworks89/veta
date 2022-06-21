@@ -15,7 +15,7 @@ import TotalGrowthBarChart from '../../components/TotalGrowthBarChart';
 import useMainLayout from '../../layout/MainLayout/MainLayoutContext';
 import TransactionsCard from '../../components/Cryppo/TransactionsCard';
 import HoldingCard from '../../components/Cryppo/HoldingCard';
-import * as CryppoService from '../../services/CryppoServices';
+import * as CryppoIcServices from '../../services/CryppoServices.ic';
 import AssetsCard from '../../components/Cryppo/AssetsCard';
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
@@ -23,14 +23,23 @@ const CryppoPlatformPage = () => {
 	const { gridSpacing, customization } = useMainLayout();
 	const [isLoading, setLoading] = useState(true);
 	const [transactions, setTransactions] = useState([]);
+
+	const [portfolios, setPortfolios] = useState([]);
 	const [data, setData] = useState({});
+
 	useEffect(() => {
 		fetchTransactions();
+		fetchPortfolios();
 		setLoading(false);
 	}, []);
 
+	const fetchPortfolios = async () => {
+		const _portfolios = await CryppoIcServices.getAllPortfolios();
+		setPortfolios(_portfolios);
+	};
+
 	const fetchTransactions = async () => {
-		const transactions = await CryppoService.getAllTransactions();
+		const transactions = await CryppoIcServices.getAllTransactions();
 
 		setTransactions(transactions || []);
 		let symbolsList = [];

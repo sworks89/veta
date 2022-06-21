@@ -179,7 +179,7 @@ const ProfileSection = () => {
 															component='span'
 															variant='h4'
 															sx={{ fontWeight: 400, textTransform: 'capitalize' }}>
-															{vetaWallet.userName}
+															{vetaWallet.name}
 														</Typography>
 													</Stack>
 													<Typography variant='subtitle2'>

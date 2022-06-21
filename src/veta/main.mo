@@ -1,60 +1,85 @@
-import HashMap "mo:base/HashMap";
-import Text "mo:base/Text";
+import Cycles "mo:base/ExperimentalCycles";
 import Error "mo:base/Error";
-import User "user";
+import HashMap "mo:base/HashMap";
+import Iter "mo:base/Iter";
+import Principal "mo:base/Principal";
+
 import Types "types";
+import UserData "./UserData"; 
 
-import UserDb "user";
+actor {
+		type UserDataCanister = UserData.UserData;
+    type CanisterId = Principal;
+    type UserId = Principal; 
+		type Data = Types.UserData; 
+		type PersonalInfo = Types.PersonalInfo;
 
-actor Veta {
-    type User = Types.User;
-	type UserId = Types.UserId;
+    private func isPrincipalEqual(x: Principal, y: Principal): Bool { x == y };
 
-	var userDB: User.UserDB = User.UserDB();
+    private var canisters: HashMap.HashMap<UserId, UserDataCanister> = HashMap.HashMap<UserId, UserDataCanister>(10, isPrincipalEqual, Principal.hash);
+		// private var canisters
+    private stable var upgradeCanisters : [(Principal, UserDataCanister)] = [];
 
-    stable var currentValue: Nat = 0;
-    var users : HashMap.HashMap<Text, (Text, Text)> = HashMap.HashMap<Text, (Text, Text)>(0, Text.equal, Text.hash);
-
-    public func increment(): async () {
-        currentValue += 1;
+		// Todo: Dynamically add cycles
+    public shared({caller}) func create(): async (CanisterId) {
+        Cycles.add(1_000_000_000_000);
+        let canister = await UserData.UserData(); 
+        let id: CanisterId = await canister.id();  
+        canisters.put(caller, canister); 
+        return id;
     };
 
-    public query func getValue(): async Nat {
-        currentValue;
+		// Get canister id
+    public shared({caller}) func getId() : async CanisterId {
+        let canister: ?UserDataCanister = canisters.get(caller);
+// let cowsay = actor("7igbu-3qaaa-aaaaa-qaapq-cai"): actor { cowsay: (Text) -> async Text };
+        // return await cowsay.cowsay(message);
+				switch (canister) {
+					case (?canister) { 
+						let id: CanisterId = await canister.id();
+						return id;
+					};
+					case (null) {
+						throw Error.reject("User Not Found")
+					};
+				}; 
+    };
+		
+		// Get canister data
+		// public shared({caller}) func get() : async Data  {
+		// 		let canister: ?UserDataCanister = canisters.get(caller);
+		// 		switch (canister) {
+		// 			case (?canister) { 
+		// 				 let result: Data = await canister.get();
+		// 					return result;
+		// 			};
+		// 			case (null) {
+		// 				throw Error.reject("User Not Found")
+		// 			};
+		// 		};
+    // };
+
+
+		// set PersonalInfo	
+		public shared({caller}) func setPersonalInfo(info : PersonalInfo) : async ()  {
+				let canister: ?UserDataCanister = canisters.get(caller);
+				switch (canister) {
+					case (?canister) { 
+						  await canister.setPersonalInfo(info); 
+					};
+					case (null) {
+						throw Error.reject("User Not Found")
+					};
+				};
     };
 
-    public query func find(name : Text) : async ? (Text, Text) {
-        return users.get(name);
+    system func preupgrade() {
+        upgradeCanisters := Iter.toArray(canisters.entries());
     };
 
-    public func insert(name: Text, phone: Text, address: Text) : async () {
-        users.put(name, (phone, address));
+    system func postupgrade() {
+        canisters := HashMap.fromIter<UserId, UserDataCanister>(upgradeCanisters.vals(), 10, isPrincipalEqual, Principal.hash);
+        upgradeCanisters := [];
     };
 
-    public func greet(name : Text) : async Text {
-        return "Hello, " # name # "!";
-    };
-
-    //User DB functions
-    public func healthcheck(): async Bool { true };
-
- 
-	public func registerUser(user: User): async () {
-		userDB.register(user);
-	};
-
-    public func verifyUser(uid: UserId): async () {
-		userDB.verify(uid);
-	};
-
-
-    public func getUser(uid: UserId): async User  {
-        let existing = userDB.findById(uid);
-            switch (existing) {
-                case (?existing) { existing };
-                case (null) {
-                    throw Error.reject("Not Found")
-                };
-            };
-	};
 };

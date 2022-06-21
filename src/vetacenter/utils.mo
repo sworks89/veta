@@ -26,15 +26,15 @@ module {
     Option.isSome(Array.find<UserId>(adminIds,identity))
   };
 
-  public func hasAccess(userId: UserId, profile: Profile): Bool {
-    userId == profile.id or isAdmin(userId)
-  };
+  // public func hasAccess(userId: UserId, profile: Profile): Bool {
+  //   userId == profile.id or isAdmin(userId)
+  // };
 
 	public func signData(): Text {
 		"this_is_a_signature";	
 	};
 
-	public func validateSignature(): Bool {
+	// public func validateSignature(): Bool {
 	
-	};
+	// };
 };

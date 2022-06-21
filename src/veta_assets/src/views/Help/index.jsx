@@ -20,7 +20,7 @@ const HelpPage = () => {
 			<Typography variant='h2' component='h2' sx={{ marginBottom: gridSpacing }}>
 				Data Generation
 			</Typography>
-			{/* <Grid container spacing={gridSpacing}>
+			<Grid container spacing={gridSpacing}>
 				<Grid item xs={12} md={4} lg={3}>
 					<MainCard content={false}>
 						<CardContent>
@@ -78,7 +78,7 @@ const HelpPage = () => {
 						</CardContent>
 					</MainCard>
 				</Grid>
-			</Grid> */}
+			</Grid>
 		</>
 	);
 };
