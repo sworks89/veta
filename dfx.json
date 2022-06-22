@@ -1,15 +1,7 @@
 {
 	"canisters": {
-		"veta": {
-			"main": "src/veta/main.mo",
-			"type": "motoko"
-		},
 		"vetawallet": {
 			"main": "src/vetawallet/main.mo",
-			"type": "motoko"
-		},
-		"vetacenter": {
-			"main": "src/vetacenter/main.mo",
 			"type": "motoko"
 		},
 		"cryppo": {
@@ -17,7 +9,7 @@
 			"type": "motoko"
 		},
 		"veta_assets": {
-			"dependencies": ["veta", "vetawallet", "vetacenter", "cryppo"],
+			"dependencies": ["vetawallet", "cryppo"],
 			"frontend": {
 				"entrypoint": "src/veta_assets/src/index.html"
 			},

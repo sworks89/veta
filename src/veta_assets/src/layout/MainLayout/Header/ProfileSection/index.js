@@ -187,7 +187,7 @@ const ProfileSection = () => {
 														{principal.toString().substring(principal.toString().length - 3)}
 													</Typography>
 												</Stack>
-												<OutlinedInput
+												{/* <OutlinedInput
 													sx={{ width: '100%', pr: 1, pl: 2, my: 2 }}
 													id='input-search-profile'
 													value={value}
@@ -206,7 +206,7 @@ const ProfileSection = () => {
 													inputProps={{
 														'aria-label': 'weight',
 													}}
-												/>
+												/> */}
 												<Divider />
 											</Box>
 											<PerfectScrollbar
@@ -216,7 +216,7 @@ const ProfileSection = () => {
 													overflowX: 'hidden',
 												}}>
 												<Box sx={{ p: 2 }}>
-													<UpgradePlanCard />
+													{/* <UpgradePlanCard />
 													<Divider />
 													<Card
 														sx={{
@@ -269,7 +269,7 @@ const ProfileSection = () => {
 															</Grid>
 														</CardContent>
 													</Card>
-													<Divider />
+													<Divider /> */}
 													<List
 														component='nav'
 														sx={{
@@ -285,7 +285,7 @@ const ProfileSection = () => {
 																mt: 0.5,
 															},
 														}}>
-														<ListItemButton
+														{/* <ListItemButton
 															sx={{ borderRadius: `${customization.borderRadius}px` }}
 															selected={selectedIndex === 0}
 															onClick={(event) =>
@@ -326,7 +326,7 @@ const ProfileSection = () => {
 																	</Grid>
 																}
 															/>
-														</ListItemButton>
+														</ListItemButton> */}
 														<ListItemButton
 															sx={{ borderRadius: `${customization.borderRadius}px` }}
 															selected={selectedIndex === 4}
