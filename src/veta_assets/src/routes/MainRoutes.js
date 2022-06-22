@@ -20,7 +20,11 @@ const MainRoutes = {
 		{
 			path: 'contact',
 			element: <Contact />,
-		}, 
+		},
+		{
+			path: 'profile/:shareId',
+			element: <Contact />,
+		},
 	],
 };
 
