@@ -1,6 +1,6 @@
 import * as React from 'react';
 import axios from 'axios';
-import { veta } from '../../../../declarations/veta';
+import { vetawallet } from '../../../../declarations/vetawallet';
 import { Principal } from '@dfinity/principal';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -57,9 +57,18 @@ function Dashboard() {
 			});
 	};
 
-	const getUserData = async () => {
-		const res = await veta.getUser(Principal.fromText(principal));
+	const skipKyc = async () => {
+		setSession(null);
+		let userData = await vetawallet.get(Principal.fromText(principal));
+		userData.verified = true;
+		userData.name = "Anon";
+		let res = await vetawallet.update(userData);
 		console.log(res);
+	}
+
+	const getUserData = async () => {
+		const res = await vetawallet.get(Principal.fromText(principal));
+		// console.log(res);
 		setUserData(res);
 	};
 
@@ -79,16 +88,26 @@ function Dashboard() {
 					<Card>
 						<span>Onboard now to get started. </span>
 						<Button onClick={onboard}>KYC Onboarding</Button>
+						<Button onClick={skipKyc}>Skip KYC</Button>
 						<Button onClick={getUserData}>Get User Data</Button>
 					</Card>
 					<Card>{kycUrl && <Onboard kycUrl={kycUrl}></Onboard>}</Card>
 					<Card>
 						{userData && (
-							<span>{`${userData.uid.toString()} ${userData.userName} - verified: ${
+							<span>{`${userData.id} ${userData.name} - verified: ${
 								userData.verified
 							}`}</span>
 						)}
-						<QRCode value='https://reactjs.org/' renderAs='canvas' />
+						{/* <QRCode value='https://reactjs.org/' renderAs='canvas' /> */}
+					</Card>
+					<Card>
+						{userData && userData.data.map(d => (
+							<>
+							<p>{d.dataType}</p>
+							<p>{d.dataContent}</p>
+							</>
+						))}
+						{/* <QRCode value='https://reactjs.org/' renderAs='canvas' /> */}
 					</Card>
 				</Paper>
 				<Copyright sx={{ pt: 4 }} />

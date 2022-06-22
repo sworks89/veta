@@ -33,6 +33,19 @@ module Types {
 		socialData : SocialData;
 	};
 
+	public type UserId = Principal;
+  public type PlatformId = Principal;
+	public type UID = Text;
+	public type UserName = Text;
+  public type Timestamp = Int; 
+
+  public type DataRegistry = {
+    id : Text;
+    userId : UserId;
+    platformId : PlatformId;
+    signature: Text;
+  };
+
   public type Data = {
     dataid : Nat;
     uid : UserId;
@@ -42,14 +55,7 @@ module Types {
     dataCategory: DataCategory;
     dataType: Text;
     dataContent: Text;
-  }
-
-	// public type UserId = Principal;
-  // public type PlatformId = Principal;
-	// public type UID = Text;
-	// public type UserName = Text;
-  // public type Timestamp = Int; 
-
+  };
 
   // public type PersonalData = {
   //   #name : Text;
@@ -68,11 +74,11 @@ module Types {
   //   #positions : Text;
   // };
 
-  // public type DataCategory = {
-  //   #personal;
-  //   #social;
-  //   #financial;
-  // };
+  public type DataCategory = {
+    #personal;
+    #social;
+    #financial;
+  };
  
   // public type KycDocument = {
   //   uid: UID;
@@ -89,12 +95,5 @@ module Types {
   //   dataContent: Text;
   //   date : Timestamp;
 	// 	signature: Text;
-  // };
-
-	// public type DataRegistry = {
-  //   id : Text;
-  //   userId : UserId;
-  //   platformId : PlatformId;
-  //   signature: Text;
   // };
 }

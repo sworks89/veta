@@ -1,42 +1,30 @@
-import Error "mo:base/Error";
-import HashMap "mo:base/HashMap";
-import Text "mo:base/Text";
-
-import Types "types";
-import VetaWalletDB "database";
-
+import Database "./database";
+import Types "./types";
+import Utils "./utils";
 
 actor VetaWallet {
-	// type UserId = Types.UserId;
-	// type PersonalInfo = Types.PersonalInfo;
+  var db: Database.Directory = Database.Directory();
 
-	// var vetaWalletDB: VetaWalletDB.VetaWalletDB = VetaWalletDB.VetaWalletDB();
-	
+  type NewUserData = Types.NewUserData;
+  type UserData = Types.UserData;
+  type UserId = Types.UserId;
 
-	// public func healthcheck(): async Bool { true };
- 
+  // Healthcheck
+  public func healthcheck(): async Bool { true };
 
-  // public func getPersonalInformation(userId: UserId): async PersonalInfo {
-	// 	// assert (owner == caller);
-	// 	let existing = vetaWalletDB.getPersonalInformation(userId);
-	// 	switch (existing) {
-	// 		case (?existing) { existing };
-	// 		case (null) {
-	// 			vetaWalletDB.initPersonalInformation(userId);
-	// 		};
-	// 	};
-	// };
+  // UserData
+  public shared(msg) func create(userData: UserData): async () {
+    db.createUser(msg.caller, userData);
+  };
 
-	// public func verify(userId: UserId): async PersonalInfo {
-	// 	// assert (owner == caller);
-	// 	let existing = vetaWalletDB.getPersonalInformation(userId);
-	// 	switch (existing) {
-	// 		case (?existing) { existing };
-	// 		case (null) {
-	// 			vetaWalletDB.initPersonalInformation(userId);
-	// 		};
-	// 	};
-	// };
-}
+  public shared(msg) func update(userData: UserData): async () {
+    db.updateUser(userData.id, userData);
+  };
 
+  public query func get(userId: UserId): async UserData {
+    Utils.getUserData(db, userId)
+  };
 
+  public shared query(msg) func getOwnId(): async UserId { msg.caller }
+
+};

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import useVetaIdentity from '../contexts/VetaIdentityContext';
 import { AppBar, Toolbar, Button, Typography, Card, Avatar, Link } from '@mui/material';
-import { veta } from '../../../declarations/veta';
+import { vetawallet } from '../../../declarations/vetawallet';
 import VetaLogo from '../_assets/images/veta-logo.svg';
 import DfinityLogo from '../_assets/images/infinity_logo.svg';
 import background1 from '../_assets/images/home/background1.jpg';
@@ -40,29 +40,29 @@ const Intro = () => {
 	const [count, setCount] = useState();
 	const [profile, setProfile] = useState();
 
-	const refreshCounter = async () => {
-		const res = await veta.getValue();
-		setCount(res.toString());
-	};
+	// const refreshCounter = async () => {
+	// 	const res = await veta.getValue();
+	// 	setCount(res.toString());
+	// };
 
-	const refreshProfile = async () => {
-		const res = await veta.find('mark');
-		setProfile(res.toString());
-	};
+	// const refreshProfile = async () => {
+	// 	const res = await veta.find('mark');
+	// 	setProfile(res.toString());
+	// };
 
-	const addCounter = async () => {
-		await veta.increment();
-		refreshCounter();
-	};
+	// const addCounter = async () => {
+	// 	await veta.increment();
+	// 	refreshCounter();
+	// };
 
-	const sign = async () => {
-		await veta.insert('mark', count, 'Deira');
-		refreshProfile();
-	};
+	// const sign = async () => {
+	// 	await veta.insert('mark', count, 'Deira');
+	// 	refreshProfile();
+	// };
 
 	useEffect(() => {
-		refreshCounter();
-		refreshProfile();
+		// refreshCounter();
+		// refreshProfile();
 	}, []);
 
 	return (

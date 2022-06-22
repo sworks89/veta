@@ -53,7 +53,7 @@ export const VetaIdentityProvider = (props) => {
 
 	const handleVetaProfile = async (principal) => {
 		try {
-			let vetaProfile = await vetawallet.getPersonalInformation(principal);
+			let vetaProfile = await vetawallet.get(principal);
 			setVetaWallet(vetaProfile);
 		} catch (e) {
 			console.log(e);

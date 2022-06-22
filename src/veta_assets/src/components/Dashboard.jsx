@@ -2,7 +2,7 @@ import * as React from 'react';
 import axios from "axios";
 import { useLocation } from "react-router-dom"
 import useVetaIdentity from '../contexts/VetaIdentityContext';
-import { veta } from "../../../declarations/veta";
+import { vetawallet } from "../../../declarations/vetawallet";
 import { Principal } from '@dfinity/principal';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -105,7 +105,7 @@ function Dashboard() {
   }
 
   const getUserData = async () => {
-    const res = await veta.getUser(Principal.fromText(principal));
+    const res = await vetawallet.get(Principal.fromText(principal));
     console.log(res)
     setUserData(res);
   };
