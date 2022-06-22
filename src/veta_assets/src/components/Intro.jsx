@@ -382,7 +382,7 @@ const Intro = () => {
 							sx={{ width: '100%', textAlign: 'center', marginBottom: '24px' }}>
 							HOW DOES IT WORK
 						</Typography>
-						<Grid contaner>
+						<Grid container>
 							<Grid item xs={12}>
 								<Grid container spacing={2}>
 									<Grid item xs={6} sm={4} md={2}>

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { vetawallet } from '../../../../declarations/vetawallet';
 import { Principal } from '@dfinity/principal';
@@ -12,7 +12,7 @@ import { Button } from '@mui/material';
 import { Paper, Card } from '@mui/material';
 import QRCode from 'qrcode.react';
 import useVetaIdentity from '../../contexts/VetaIdentityContext';
-
+const apiUrl = 'https://us-central1-thanhpage-d.cloudfunctions.net/api/v1';
 function Copyright(props) {
 	return (
 		<Typography variant='body2' color='text.secondary' align='center' {...props}>
@@ -42,35 +42,170 @@ function Onboard(props) {
 function Dashboard() {
 	const { signInByICProvider, signOut, principal, client, vetaWallet } = useVetaIdentity();
 
-	const [userData, setUserData] = React.useState();
-	const [anchorElUser, setAnchorElUser] = React.useState(null);
+	const [userData, setUserData] = useState();
+	const [anchorElUser, setAnchorElUser] = useState(null);
 
-	const [session, setSession] = React.useState(null);
-	const [kycUrl, setKycUrl] = React.useState('');
+	const [session, setSession] = useState(null);
+	const [kycUrl, setKycUrl] = useState('');
+	const kycResultTimer = useRef();
+
+	useEffect(() => {
+		return () => {
+			if (kycResultTimer.current) {
+				clearInterval(kycResultTimer.current);
+			}
+		};
+	}, []);
 
 	const onboard = async () => {
-		await axios
-			.get('https://us-central1-thanhpage-d.cloudfunctions.net/api/v1/identomat/getSession')
-			.then((resp) => {
-				setSession(resp.data);
-				setKycUrl(`https://widget.identomat.com/?session_token=${resp.data}`);
-			});
+		await axios.get(`${apiUrl}/identomat/getSession`).then((resp) => {
+			setSession(resp.data);
+			setKycUrl(`https://widget.identomat.com/?session_token=${resp.data}`);
+		});
 	};
 
 	const getKycResult = async () => {
-		await axios
-			.get(`https://us-central1-thanhpage-d.cloudfunctions.net/api/v1/identomat/result/${session}`)
-			.then((resp) => {
-				console.log(resp);
-			});
+		const { data } = await axios.get(`${apiUrl}/identomat/result/${session}`);
+		const { result } = data;
+
+		if (result == 'approved') {
+			const {
+				// {
+				//     "result": "approved",
+				//     "similarity": 0.9034052020554081,
+				//     "live": false,
+				//     "document_type": "id",
+				//     "general_document": [],
+				//     "reject_reason": {
+				//         "value": "",
+				//         "description": ""
+				//     },
+				//     "result_comment": "",
+				//     "face_images": 1,
+				//     "id_card_front": {
+				//         "Sex_en_US": "M",
+				//         "Date_of_Birth_en_US": "11/20/1989",
+				//         "Date_of_Expiry_en_US": "3/23/2025",
+				//         "Date_of_Issue_en_US": "3/24/2022",
+				//         "Issuing_State_Code_en_US": "ARE",
+				//         "Date_of_Birth_ISO": "1989-11-20T00:00:00.000Z",
+				//         "Date_of_Expiry_ISO": "2025-03-23T00:00:00.000Z"
+				//     },
+				//     "id_card_back": {
+				//         "Document_Number_en_US": "121293496",
+				//         "Issuing_State_Code_en_US": "ARE",
+				//         "Given_Names_en_US": "TRAN MINH",
+				//         "Surname_en_US": "THANH",
+				//         "Nationality_Code_en_US": "VNM",
+				//         "Sex_en_US": "M",
+				//         "Personal_Number_en_US": "78419890793131",
+				//         "Date_of_Birth_en_US": "11/20/1989",
+				//         "Date_of_Expiry_en_US": "3/23/2025",
+				//         "Nationality_en_US": "VNM",
+				//         "Date_of_Birth_ISO": "1989-11-20T00:00:00.000Z",
+				//         "Date_of_Expiry_ISO": "2025-03-23T00:00:00.000Z"
+				//     },
+				//     "suggested": {},
+				//     "person": {
+				//         "first_name": "TRAN MINH",
+				//         "last_name": "THANH",
+				//         "birthday": "11/20/1989",
+				//         "citizenship": "ARE",
+				//         "nationality": "VNM",
+				//         "document_number": "121293496",
+				//         "document_issued": "3/24/2022",
+				//         "document_expires": "3/23/2025",
+				//         "birthday_time": "1989-11-20T00:00:00.000Z",
+				//         "age": 32,
+				//         "document_expires_time": "2025-03-23T00:00:00.000Z",
+				//         "issuing_state": "ARE",
+				//         "sex": "M",
+				//         "personal_number": "78419890793131",
+				//         "status": "FIELDS_MISMATCH"
+				//     }
+				// }
+
+				result,
+				similarity,
+				live,
+				document_type,
+				general_document,
+				reject_reason,
+				result_comment,
+				face_images,
+				id_card_front,
+				id_card_back,
+				suggested,
+				person,
+			} = data;
+			const { value, description } = reject_reason;
+			// const {
+			// 	Sex_en_US,
+			// 	Date_of_Birth_en_US,
+			// 	Date_of_Expiry_en_US,
+			// 	Date_of_Issue_en_US,
+			// 	Issuing_State_Code_en_US,
+			// 	Date_of_Birth_ISO,
+			// 	Date_of_Expiry_ISO,
+			// } = id_card_front;
+			// const {
+			// 	Document_Number_en_US,
+			// 	Issuing_State_Code_en_US,
+			// 	Given_Names_en_US,
+			// 	Surname_en_US,
+			// 	Nationality_Code_en_US,
+			// 	Sex_en_US,
+			// 	Personal_Number_en_US,
+			// 	Date_of_Birth_en_US,
+			// 	Date_of_Expiry_en_US,
+			// 	Nationality_en_US,
+			// 	Date_of_Birth_ISO,
+			// 	Date_of_Expiry_ISO,
+			// } = id_card_back;
+			const {
+				first_name,
+				last_name,
+				birthday,
+				citizenship,
+				nationality,
+				document_number,
+				document_issued,
+				document_expires,
+				birthday_time,
+				age,
+				document_expires_time,
+				issuing_state,
+				sex,
+				personal_number,
+				status,
+			} = person;
+			// Found result
+			setKycUrl();
+			let _userData = await vetawallet.get(Principal.fromText(principal));
+			_userData.verified = true;
+			_userData.name = first_name;
+			await vetawallet.update(_userData);
+			setUserData(_userData);
+			if (kycResultTimer.current) {
+				clearInterval(kycResultTimer.current);
+			}
+		}
 	};
+
+	useEffect(() => {
+		if (kycUrl) {
+			kycResultTimer.current = setInterval(() => {
+				getKycResult();
+			}, 2000);
+		}
+	}, [kycUrl]);
 
 	const skipKyc = async () => {
 		setSession(null);
-		let userData = await vetawallet.get(Principal.fromText(principal));
-		userData.verified = true;
-		userData.name = 'Anon';
-		let res = await vetawallet.update(userData);
+		let _userData = await vetawallet.get(Principal.fromText(principal));
+		_userData.verified = true;
+		_userData.name = 'Anon';
+		let res = await vetawallet.update(_userData);
 		console.log(res);
 	};
 
