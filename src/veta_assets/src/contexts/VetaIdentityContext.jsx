@@ -32,7 +32,7 @@ export const VetaIdentityProvider = (props) => {
 		setPending(false);
 	};
 
-	const signInByICProvider = async () => {
+	const signInByICProvider = async (callback) => {
 		const { identity, principal } = await new Promise((resolve, reject) => {
 			client.login({
 				identityProvider: 'https://identity.ic0.app',
@@ -44,11 +44,13 @@ export const VetaIdentityProvider = (props) => {
 				onError: reject,
 			});
 		});
-
 		setPrincipal(principal.toString());
 		// await vetacenter.registerUser(principal);
 		// Check if principal existed in VetaWallet
 		await handleVetaProfile(principal);
+		if (callback) {
+			callback();
+		}
 	};
 
 	const handleVetaProfile = async (principal) => {
@@ -63,6 +65,7 @@ export const VetaIdentityProvider = (props) => {
 	const signOut = async () => {
 		await client.logout();
 		setPrincipal('');
+		setVetaWallet();
 	};
 
 	useEffect(() => {

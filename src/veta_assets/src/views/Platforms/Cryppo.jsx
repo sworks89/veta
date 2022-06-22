@@ -34,13 +34,13 @@ const CryppoPlatformPage = () => {
 	}, []);
 
 	const fetchPortfolios = async () => {
-		const _portfolios = await CryppoIcServices.getAllPortfolios();
-		setPortfolios(_portfolios);
+		// const _portfolios = await CryppoIcServices.getAllPortfolios();
+		// setPortfolios(_portfolios);
 	};
 
 	const fetchTransactions = async () => {
-		const transactions = await CryppoIcServices.getAllTransactions();
-
+		// const transactions = await CryppoIcServices.getAllTransactions();
+		const transactions = [];
 		setTransactions(transactions || []);
 		let symbolsList = [];
 		const assetsByTransactions = {};

@@ -17,18 +17,26 @@ function Copyright(props) {
 	return (
 		<Typography variant='body2' color='text.secondary' align='center' {...props}>
 			{'Copyright © '}
-			<Link color='inherit' href='https://veta.io/'>
+			<Link color='inherit' href='https://k3gdk-giaaa-aaaaj-aivfa-cai.ic0.app/'>
 				Veta
 			</Link>{' '}
-			{new Date().getFullYear()}
-			{'.'}
+			2022
 		</Typography>
 	);
 }
 
 function Onboard(props) {
 	const { kycUrl } = props;
-	return <iframe className='iframe-kyc' src={kycUrl} allow='camera'></iframe>;
+	return (
+		<iframe
+			style={{
+				width: '100%',
+				height: '60vh',
+			}}
+			className='iframe-kyc'
+			src={kycUrl}
+			allow='camera'></iframe>
+	);
 }
 
 function Dashboard() {
@@ -61,10 +69,10 @@ function Dashboard() {
 		setSession(null);
 		let userData = await vetawallet.get(Principal.fromText(principal));
 		userData.verified = true;
-		userData.name = "Anon";
+		userData.name = 'Anon';
 		let res = await vetawallet.update(userData);
 		console.log(res);
-	}
+	};
 
 	const getUserData = async () => {
 		const res = await vetawallet.get(Principal.fromText(principal));
@@ -94,19 +102,18 @@ function Dashboard() {
 					<Card>{kycUrl && <Onboard kycUrl={kycUrl}></Onboard>}</Card>
 					<Card>
 						{userData && (
-							<span>{`${userData.id} ${userData.name} - verified: ${
-								userData.verified
-							}`}</span>
+							<span>{`${userData.id} ${userData.name} - verified: ${userData.verified}`}</span>
 						)}
 						{/* <QRCode value='https://reactjs.org/' renderAs='canvas' /> */}
 					</Card>
 					<Card>
-						{userData && userData.data.map(d => (
-							<>
-							<p>{d.dataType}</p>
-							<p>{d.dataContent}</p>
-							</>
-						))}
+						{userData &&
+							userData.data.map((d) => (
+								<>
+									<p>{d.dataType}</p>
+									<p>{d.dataContent}</p>
+								</>
+							))}
 						{/* <QRCode value='https://reactjs.org/' renderAs='canvas' /> */}
 					</Card>
 				</Paper>

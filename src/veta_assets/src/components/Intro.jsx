@@ -13,16 +13,18 @@ import {
 	Paper,
 	Grid,
 	IconButton,
+	Stack,
 } from '@mui/material';
 import { vetawallet } from '../../../declarations/vetawallet';
 import VetaLogo from '../_assets/images/veta-logo.svg';
 import DfinityLogo from '../_assets/images/infinity_logo.svg';
-import background1 from '../_assets/images/home/background1.jpg';
+import background1 from '../_assets/images/home/background1.jpeg';
 import background2 from '../_assets/images/home/background2.png';
-import background3 from '../_assets/images/home/background3.jpg';
-import background4 from '../_assets/images/home/background4.jpg';
+import background3 from '../_assets/images/home/background3.jpeg';
+import background4 from '../_assets/images/home/background4.jpeg';
 import thanhPic from '../_assets/images/home/thanh.png';
 import markPic from '../_assets/images/home/mark.jpeg';
+import User1 from '../_assets/images/users/user-round.svg';
 import {
 	Handshake,
 	HowToReg,
@@ -34,6 +36,7 @@ import {
 	LinkedIn,
 	GitHub,
 } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
 	return (
@@ -50,6 +53,7 @@ function Copyright(props) {
 
 const Intro = () => {
 	const { signInByICProvider, signOut, principal, client, vetaWallet } = useVetaIdentity();
+	const navigate = useNavigate();
 	const [count, setCount] = useState();
 	const [profile, setProfile] = useState();
 
@@ -72,7 +76,11 @@ const Intro = () => {
 	// 	await veta.insert('mark', count, 'Deira');
 	// 	refreshProfile();
 	// };
-
+	const handleHomeLogin = () => {
+		signInByICProvider(() => {
+			navigate('/dashboard');
+		});
+	};
 	useEffect(() => {
 		// refreshCounter();
 		// refreshProfile();
@@ -89,16 +97,44 @@ const Intro = () => {
 					alignItems: 'center',
 					justifyContent: 'center',
 					backgroundColor: 'rgba(0, 0, 0, 0.87)',
-					color: '#fff',
 					padding: '10px 24px',
 				}}>
-				<Box sx={{ width: '100%', maxWidth: 'xs', display: 'flex' }}>
+				<Box sx={{ width: '100%', maxWidth: 'xs', display: 'flex', color: 'white' }}>
 					<VetaLogo style={{ height: '45px' }} />
 					<Toolbar sx={{ width: '100%' }}>{/* content */}</Toolbar>
-					<Button sx={{}} variant='text' color='inherit' onClick={signInByICProvider}>
-						<DfinityLogo style={{ width: '24px', marginRight: '5px' }} />
-						<strong className='align-self-end mt-1'>Login</strong>
-					</Button>
+					{vetaWallet ? (
+						<>
+							<Button
+								sx={{ marginRight: '30px' }}
+								variant='text'
+								color='inherit'
+								onClick={() => navigate('/dashboard')}>
+								<strong className='align-self-end mt-1'>Dashboard</strong>
+							</Button>
+							<Box sx={{ display: 'flex', flexDirection: 'column' }}>
+								<Avatar
+									onClick={() => navigate('/dashboard')}
+									src={User1}
+									sx={{
+										width: '30px',
+										height: '30px',
+										margin: '8px 0 8px 8px !important',
+										cursor: 'pointer',
+										marginLeft: '30px',
+									}}
+									color='inherit'
+								/>
+								{/* <Typography variant='h6' component='h6' sx={{ color: 'white' }}>
+									{vetaWallet.name}
+								</Typography> */}
+							</Box>
+						</>
+					) : (
+						<Button sx={{}} variant='text' color='inherit' onClick={handleHomeLogin}>
+							<DfinityLogo style={{ width: '24px', marginRight: '5px' }} />
+							<strong className='align-self-end mt-1'>Login</strong>
+						</Button>
+					)}
 				</Box>
 			</AppBar>
 			<Paper
