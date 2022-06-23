@@ -95,7 +95,7 @@ const ProfileSection = () => {
 	return (
 		<>
 			{!vetaWallet && client ? (
-				<Button variant='text' color='inherit' onClick={signInByICProvider}>
+				<Button variant='text' color='inherit' onClick={() => signInByICProvider()}>
 					<InfinityLogo style={{ width: '24px', marginRight: '5px' }} />
 					<strong className='align-self-end mt-1'>Login</strong>
 				</Button>

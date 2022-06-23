@@ -17,7 +17,7 @@ import useVetaIdentity from '../../../contexts/VetaIdentityContext';
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
 const Header = ({ handleLeftDrawerToggle }) => {
-	const { signInByICProvider, signOut, principal, client, vetaWallet } = useVetaIdentity();
+	const { vetaWallet } = useVetaIdentity();
 	const theme = useTheme();
 
 	return (

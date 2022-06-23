@@ -1,6 +1,7 @@
 import Intro from '../components/Intro';
 import DataCenter from '../views/DataCenter';
 import MinimalLayout from '../layout/MinimalLayout'; 
+import ViewSharedProfile from '../views/Profiles/ViewSharedProfile';
 
 const MainRoutes = {
 	element: <MinimalLayout />,
@@ -22,8 +23,8 @@ const MainRoutes = {
 			element: <Contact />,
 		},
 		{
-			path: 'profile/:shareId',
-			element: <Contact />,
+			path: 'profile/:profileId',
+			element: <ViewSharedProfile />,
 		},
 	],
 };

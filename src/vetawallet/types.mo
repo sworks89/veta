@@ -1,7 +1,9 @@
 import Bool "mo:base/Bool";
+import Text "mo:base/Text";
 import Principal "mo:base/Principal";
 
 module {
+	public type UID = Text;
   public type UserId = Principal;
   public type PlatformId = Principal;
   public type Timestamp = Int;
@@ -37,17 +39,13 @@ module {
     dataType: Text;
     dataContent: Text;
   };
-
-  public type NewProfile = {
-    profileName: Text;
-    isDefault: Bool;
-    data: [Data];
-  };
+ 
 
   public type Profile = {
-    id: UserId;
+    id: UID;
     profileName: Text;
     isDefault: Bool;
     data: [Data];
+		userId: UserId;
   };
 };

@@ -40,7 +40,7 @@ function Onboard(props) {
 }
 
 function Dashboard() {
-	const { signInByICProvider, signOut, principal, client, vetaWallet } = useVetaIdentity();
+	const { principal } = useVetaIdentity();
 
 	const [userData, setUserData] = useState();
 	const [anchorElUser, setAnchorElUser] = useState(null);
@@ -181,7 +181,7 @@ function Dashboard() {
 			} = person;
 			// Found result
 			setKycUrl();
-			let _userData = await vetawallet.get(Principal.fromText(principal));
+			let _userData = await vetawallet.get(principal);
 			_userData.verified = true;
 			_userData.name = first_name;
 			await vetawallet.update(_userData);
@@ -202,7 +202,7 @@ function Dashboard() {
 
 	const skipKyc = async () => {
 		setSession(null);
-		let _userData = await vetawallet.get(Principal.fromText(principal));
+		let _userData = await vetawallet.get(principal);
 		_userData.verified = true;
 		_userData.name = 'Anon';
 		let res = await vetawallet.update(_userData);
@@ -210,7 +210,7 @@ function Dashboard() {
 	};
 
 	const getUserData = async () => {
-		const res = await vetawallet.get(Principal.fromText(principal));
+		const res = await vetawallet.get(principal);
 		// console.log(res);
 		setUserData(res);
 	};

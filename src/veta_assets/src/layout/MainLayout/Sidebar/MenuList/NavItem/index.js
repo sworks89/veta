@@ -70,8 +70,7 @@ const NavItem = ({ item, level }) => {
 
 	// active menu item on page load
 	useEffect(() => {
-		const currentIndex = document.location.pathname
-			.toString()
+		const currentIndex = document.location.hash
 			.split('/')
 			.findIndex((id) => id === item.id);
 		if (currentIndex > -1) {

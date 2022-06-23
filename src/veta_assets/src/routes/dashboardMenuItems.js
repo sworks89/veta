@@ -2,12 +2,12 @@ import { IconDashboard, IconBrandChrome, IconHelp, IconSocial, IconWallet, IconU
  
 
 const dashboard = {
-	id: 'dashboard',
+	id: 'root',
 	title: 'Veta Identity',
 	type: 'group',
 	children: [
 		{
-			id: 'default',
+			id: 'dashboard',
 			title: 'Dashboard',
 			type: 'item',
 			url: 'dashboard',

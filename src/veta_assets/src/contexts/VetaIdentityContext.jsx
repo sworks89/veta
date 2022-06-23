@@ -26,7 +26,7 @@ export const VetaIdentityProvider = (props) => {
 		if (isAuthenticated) {
 			const identity = client.getIdentity();
 			const principal = identity.getPrincipal();
-			setPrincipal(principal.toString());
+			setPrincipal(principal);
 			await handleVetaProfile(principal);
 		}
 		setPending(false);
@@ -44,7 +44,7 @@ export const VetaIdentityProvider = (props) => {
 				onError: reject,
 			});
 		});
-		setPrincipal(principal.toString());
+		setPrincipal(principal);
 		// await vetacenter.registerUser(principal);
 		// Check if principal existed in VetaWallet
 		await handleVetaProfile(principal);
@@ -54,6 +54,15 @@ export const VetaIdentityProvider = (props) => {
 	};
 
 	const handleVetaProfile = async (principal) => {
+		try {
+			let vetaProfile = await vetawallet.get(principal);
+			setVetaWallet(vetaProfile);
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	const refreshWallet = async () => {
 		try {
 			let vetaProfile = await vetawallet.get(principal);
 			setVetaWallet(vetaProfile);
@@ -80,6 +89,7 @@ export const VetaIdentityProvider = (props) => {
 				signOut,
 				signInByICProvider,
 				vetaWallet,
+				refreshWallet,
 			}}>
 			{!pending && children}
 		</VetaIdentityContext.Provider>

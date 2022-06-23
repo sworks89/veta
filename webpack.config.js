@@ -29,13 +29,13 @@ function initCanisterEnv() {
 	}, {});
 }
 const canisterEnvVariables = initCanisterEnv();
-console.log('1');
+
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const frontendDirectory = 'veta_assets';
 
 const asset_entry = path.join('src', frontendDirectory, 'src', 'index.html');
-console.log('2');
+
 module.exports = {
 	target: 'web',
 	mode: isDevelopment ? 'development' : 'production',

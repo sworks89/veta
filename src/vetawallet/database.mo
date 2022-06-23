@@ -6,8 +6,7 @@ import Option "mo:base/Option";
 import Principal "mo:base/Principal";
 import Types "./types";
 
-module {
-  type NewProfile = Types.NewProfile;
+module { 
   type Profile = Types.Profile;
   type NewUserData = Types.NewUserData;
   type UserData = Types.UserData;
@@ -17,10 +16,7 @@ module {
     // The "database" is just a local hash map
     let hashMap = HashMap.HashMap<UserId, Profile>(1, isEq, Principal.hash);
     let userDB = HashMap.HashMap<UserId, UserData>(1, isEq, Principal.hash);
-
-    public func createOne(userId: UserId, profile: NewProfile) {
-      hashMap.put(userId, makeProfile(userId, profile));
-    };
+ 
 
     public func createUser(userId: UserId, userData: UserData) {
       userDB.put(userId, makeUser(userId, userData));
@@ -70,15 +66,7 @@ module {
     // };
 
     // Helpers
-
-    func makeProfile(userId: UserId, profile: NewProfile): Profile {
-      {
-        id = userId;
-        profileName =  profile.profileName;
-        isDefault = profile.isDefault;
-        data = profile.data;
-      }
-    };
+ 
 
     func makeUser(userId: UserId, userData: NewUserData): UserData {
       {
