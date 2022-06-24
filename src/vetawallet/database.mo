@@ -14,7 +14,6 @@ module {
 
   public class Directory() {
     // The "database" is just a local hash map
-    let hashMap = HashMap.HashMap<UserId, Profile>(1, isEq, Principal.hash);
     let userDB = HashMap.HashMap<UserId, UserData>(1, isEq, Principal.hash);
  
 
@@ -22,16 +21,8 @@ module {
       userDB.put(userId, makeUser(userId, userData));
     };
 
-    public func updateOne(userId: UserId, profile: Profile) {
-      hashMap.put(userId, profile);
-    };
-
     public func updateUser(userId: UserId, userData: UserData) {
       userDB.put(userId, userData);
-    };
-
-    public func findOne(userId: UserId): ?Profile {
-      hashMap.get(userId)
     };
 
     public func findUser(userId: UserId): ?UserData {

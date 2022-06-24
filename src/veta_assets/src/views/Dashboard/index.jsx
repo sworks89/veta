@@ -252,7 +252,7 @@ function Dashboard() {
 						<Button onClick={getUserData}>Get User Data</Button>
 						<Button onClick={signData}>Test Signature</Button>
 						<Button onClick={encryptData}>Test Encrypt</Button>
-						<Button onClick={decryptData}>Test Descrypt</Button>
+						<Button onClick={decryptData}>Test Decrypt</Button>
 					</Card>
 					<Card>{kycUrl && <Onboard kycUrl={kycUrl}></Onboard>}</Card>
 					<Card>

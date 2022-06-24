@@ -12,11 +12,13 @@ actor VetaWallet {
   type UserId = Types.UserId;
 	type UID = Types.UID;
 	type Profile = Types.Profile;
+  type Record = Types.Record;
 
 
 	func isUidEq(x: UID, y: UID): Bool { x == y };
 
 	let sharedProfile = HashMap.HashMap<UID, Profile>(1, isUidEq, Text.hash);
+  let dataRegistry = HashMap.HashMap<UID, Record>(1, isUidEq, Text.hash);
 
   // Healthcheck
   public func healthcheck(): async Bool { true };
@@ -33,12 +35,21 @@ actor VetaWallet {
   public query func get(userId: UserId): async UserData {
     Utils.getUserData(db, userId)
   };
+
 	public func shareProfile(profile: Profile): async () {
 		sharedProfile.put(profile.id, profile);
 	};
 
 	public query func getSharedProfile(id: UID): async ?Profile {
 		sharedProfile.get(id);
+	};
+
+  public func addRecord(record: Record): async () {
+    dataRegistry.put(record.recordId, record);
+  };
+
+  public query func getRecord(id: UID): async ?Record {
+		dataRegistry.get(id);
 	};
 
   public shared query(msg) func getOwnId(): async UserId { msg.caller };

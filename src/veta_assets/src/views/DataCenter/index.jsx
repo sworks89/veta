@@ -6,7 +6,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // project imports
 import MainCard from '../../ui-component/cards/MainCard';
 
-// ==============================|| D ATA CENTERPAGE ||============================== //
+// ==============================|| DATA CENTERPAGE ||============================== //
 
 const DataCenter = () => {
     const [selectedPlatform, setSelectedPlatform] = useState('');

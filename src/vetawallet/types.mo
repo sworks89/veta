@@ -30,16 +30,24 @@ module {
   };
 
   public type Data = {
-    dataid : Nat;
+    dataId : UID;
     uid : UserId;
-    platformid : PlatformId;
+    platformId : PlatformId;
     signature : Text;
     date : Timestamp;
     dataCategory: DataCategory;
     dataType: Text;
     dataContent: Text;
   };
- 
+
+  public type Record = {
+    recordId: UID;
+    userId: UserId;
+    platformId : PlatformId;
+    dataId : UID;
+    date : Timestamp;
+    signature : Text;
+  };
 
   public type Profile = {
     id: UID;
