@@ -10,7 +10,7 @@ import Link from '@mui/material/Link';
 import { Button } from '@mui/material';
 // import { mainListItems, secondaryListItems } from './listItems';
 import { Paper, Card } from '@mui/material';
-import QRCode from 'qrcode.react';
+import * as Crypto from '../../utils/crypto';
 import useVetaIdentity from '../../contexts/VetaIdentityContext';
 const apiUrl = 'https://us-central1-thanhpage-d.cloudfunctions.net/api/v1';
 function Copyright(props) {
@@ -44,7 +44,7 @@ function Dashboard() {
 
 	const [userData, setUserData] = useState();
 	const [anchorElUser, setAnchorElUser] = useState(null);
-
+	const [encrypted, setEncrypted] = useState(null);
 	const [session, setSession] = useState(null);
 	const [kycUrl, setKycUrl] = useState('');
 	const kycResultTimer = useRef();
@@ -215,6 +215,23 @@ function Dashboard() {
 		setUserData(res);
 	};
 
+	const signData = () => {
+		const signature = Crypto.signData("hello");
+		console.log(signature);
+	}
+
+	const encryptData = () => {
+		const test = {id:1, interest: 'basketball'};
+		const encryptedData = Crypto.encryptData(test);
+		setEncrypted(encryptedData)
+		console.log(encryptedData);
+	}
+
+	const decryptData = () => {
+		const decrypted = Crypto.decryptData(encrypted);
+		console.log(decrypted);
+	}
+
 	return (
 		<Box
 			component='main'
@@ -233,6 +250,9 @@ function Dashboard() {
 						<Button onClick={onboard}>KYC Onboarding</Button>
 						<Button onClick={skipKyc}>Skip KYC</Button>
 						<Button onClick={getUserData}>Get User Data</Button>
+						<Button onClick={signData}>Test Signature</Button>
+						<Button onClick={encryptData}>Test Encrypt</Button>
+						<Button onClick={decryptData}>Test Descrypt</Button>
 					</Card>
 					<Card>{kycUrl && <Onboard kycUrl={kycUrl}></Onboard>}</Card>
 					<Card>

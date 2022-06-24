@@ -71,6 +71,7 @@
 		"@tabler/icons": "^1.70.0",
 		"apexcharts": "^3.35.3",
 		"axios": "^0.27.2",
+		"crypto-js": "^4.1.1",
 		"framer-motion": "^6.3.11",
 		"material-ui-popup-state": "^3.1.1",
 		"qrcode.react": "^3.0.2",
