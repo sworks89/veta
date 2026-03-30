@@ -10,6 +10,7 @@ import CryppoPlatformPage from '../views/Platforms/Cryppo';
 import SocialNetworkPlatformPage from '../views/Platforms/SocialNetwork';
 import DataCenter from '../views/DataCenter';
 import ProfilesPage from '../views/Profiles';
+import ProfileDetail from '../views/Profiles/ProfileDetail';
 import QrCodePage from '../views/QrCode';
 import WalletPage from '../views/Wallet';
 
@@ -38,6 +39,10 @@ const DashboardRoutes = {
 			element: <ProfilesPage />,
 		},
 
+		{
+			path: 'dashboard/profiles/:profileId',
+			element: <ProfileDetail />,
+		},
 		{
 			path: 'dashboard/wallet',
 			element: <WalletPage />,

@@ -13,7 +13,6 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import LoadingButton from '@mui/lab/LoadingButton';
-import SaveIcon from '@mui/icons-material/Save';
 import * as VetaWalletServices from '../services/VetaWalletServices.ic';
 import useVetaIdentity from '../contexts/VetaIdentityContext';
 
@@ -21,21 +20,33 @@ const AddProfileCard = () => {
 	const { refreshWallet, principal } = useVetaIdentity();
 
 	const [open, setOpen] = useState(false);
-	const [profile, setProfile] = useState({ name: '', email: '', isDefault: false });
+	const [profileName, setProfileName] = useState('');
+	const [isDefault, setIsDefault] = useState(false);
 	const [saving, setSaving] = useState(false);
+	const [error, setError] = useState('');
+
 	const handleAddProfile = async () => {
+		const name = profileName.trim();
+		if (!name) {
+			setError('Please enter a profile name');
+			return;
+		}
 		try {
 			setSaving(true);
-			await VetaWalletServices.addProfile(principal, profile);
-			// Todo: Auto refresh wallet realtime
-			refreshWallet();
+			setError('');
+			await VetaWalletServices.addProfile(principal, { name, isDefault, data: [] });
+			await refreshWallet();
 			setOpen(false);
+			setProfileName('');
+			setIsDefault(false);
 		} catch (e) {
 			console.error(e);
+			setError('Failed to create profile');
 		} finally {
 			setSaving(false);
 		}
 	};
+
 	return (
 		<>
 			<Card sx={{ maxWidth: 345, height: '300px' }}>
@@ -50,59 +61,58 @@ const AddProfileCard = () => {
 					<Typography gutterBottom variant='h5' component='div' sx={{ textAlign: 'center' }}>
 						Add Profile
 					</Typography>
-					<IconButton size='small' aria-label='Edit' onClick={() => setOpen(true)}>
+					<IconButton size='small' aria-label='Add profile' onClick={() => setOpen(true)}>
 						<AddIcon />
 					</IconButton>
 				</CardContent>
 			</Card>
-			<Dialog fullWidth={true} maxWidth={'xs'} open={open} onClose={() => setOpen(false)}>
+			<Dialog fullWidth maxWidth='xs' open={open} onClose={() => setOpen(false)}>
 				<DialogTitle>
 					<Typography component='h3' variant='h3'>
-						Add profile
+						Create Profile
 					</Typography>
 				</DialogTitle>
 				<DialogContent>
-					{/* <DialogContentText>You can revoke this profile from sharing anytime.</DialogContentText> */}
+					<Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
+						Profiles let you organize and share subsets of your data.
+					</Typography>
 					<TextField
 						autoFocus
 						margin='dense'
-						id='name'
 						label='Profile name'
-						type='text'
+						placeholder='e.g. Work, Personal, Public'
 						fullWidth
 						variant='standard'
-						onChange={(event) => setProfile({ ...profile, name: event.target.value })}
-					/>
-					<TextField
-						autoFocus
-						margin='dense'
-						id='email'
-						label='email'
-						type='email'
-						fullWidth
-						variant='standard'
-						onChange={(event) => setProfile({ ...profile, email: event.target.value })}
+						value={profileName}
+						onChange={(e) => {
+							setProfileName(e.target.value);
+							setError('');
+						}}
+						onKeyDown={(e) => e.key === 'Enter' && handleAddProfile()}
+						error={!!error}
+						helperText={error}
+						inputProps={{ maxLength: 64 }}
 					/>
 					<FormControlLabel
+						sx={{ mt: 1 }}
 						control={
 							<Switch
-								checked={profile.isDefault}
-								onChange={(event) => setProfile({ ...profile, isDefault: event.target.checked })}
+								checked={isDefault}
+								onChange={(e) => setIsDefault(e.target.checked)}
 								name='isDefault'
 							/>
 						}
-						label='Default Profile?'
+						label='Default Profile'
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={() => setOpen(false)}>Close</Button>
+					<Button onClick={() => setOpen(false)}>Cancel</Button>
 					<LoadingButton
 						loading={saving}
-						sx={{ width: '110px' }}
-						loadingPosition='start'
 						variant='contained'
-						onClick={handleAddProfile}>
-						Save
+						onClick={handleAddProfile}
+						disabled={!profileName.trim()}>
+						Create
 					</LoadingButton>
 				</DialogActions>
 			</Dialog>
