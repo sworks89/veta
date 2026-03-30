@@ -1,6 +1,6 @@
 import Intro from '../components/Intro';
 import DataCenter from '../views/DataCenter';
-import MinimalLayout from '../layout/MinimalLayout'; 
+import MinimalLayout from '../layout/MinimalLayout';
 import ViewSharedProfile from '../views/Profiles/ViewSharedProfile';
 
 const MainRoutes = {
@@ -15,14 +15,6 @@ const MainRoutes = {
 			element: <DataCenter />,
 		},
 		{
-			path: 'about',
-			element: <About />,
-		},
-		{
-			path: 'contact',
-			element: <Contact />,
-		},
-		{
 			path: 'profile/:profileId',
 			element: <ViewSharedProfile />,
 		},
@@ -30,17 +22,3 @@ const MainRoutes = {
 };
 
 export default MainRoutes;
-function About() {
-	return (
-		<div className='about-page'>
-			<h1>About Page</h1>
-		</div>
-	);
-}
-function Contact() {
-	return (
-		<div className='contact-page'>
-			<h1>Contact Page</h1>
-		</div>
-	);
-}

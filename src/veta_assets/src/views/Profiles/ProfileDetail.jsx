@@ -20,7 +20,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SaveIcon from '@mui/icons-material/Save';
 import useVetaIdentity from '../../contexts/VetaIdentityContext';
-import { getVetaWalletActor } from '../../services/actor';
+import { getVetaWalletActor, unwrapResult } from '../../services/actor';
 
 function getCategoryLabel(cat) {
   if (!cat) return 'unknown';
@@ -86,7 +86,8 @@ const ProfileDetail = () => {
       const updatedProfiles = vetaWallet.profiles.map((p) =>
         p.id === profileId ? updatedProfile : p,
       );
-      await actor.update({ ...vetaWallet, profiles: updatedProfiles });
+      const result = await actor.update({ ...vetaWallet, profiles: updatedProfiles });
+      unwrapResult(result);
       await refreshWallet();
       setSnackbar({ open: true, message: 'Profile updated', severity: 'success' });
     } catch (e) {

@@ -1,4 +1,4 @@
-import { getVetaWalletActor } from './actor';
+import { getVetaWalletActor, unwrapResult } from './actor';
 import { v4 as uuidV4 } from 'uuid';
 
 export const addProfile = async (principal, profile) => {
@@ -17,7 +17,8 @@ export const addProfile = async (principal, profile) => {
 		userId: principal,
 	});
 	userData = { ...userData, profiles };
-	await actor.update(userData);
+	const result = await actor.update(userData);
+	unwrapResult(result);
 	return userData;
 };
 
@@ -25,7 +26,17 @@ export const shareProfile = async (profile) => {
 	const actor = getVetaWalletActor();
 	if (!actor || !profile) throw new Error('Missing actor or profile');
 
-	await actor.shareProfile(profile);
+	const result = await actor.shareProfile(profile);
+	unwrapResult(result);
+	return true;
+};
+
+export const unshareProfile = async (profileId) => {
+	const actor = getVetaWalletActor();
+	if (!actor || !profileId) throw new Error('Missing actor or profileId');
+
+	const result = await actor.unshareProfile(profileId);
+	unwrapResult(result);
 	return true;
 };
 

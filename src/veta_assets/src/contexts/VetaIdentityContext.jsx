@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, createContext } from 'react';
+import { useState, useEffect, useContext, useCallback, createContext } from 'react';
 import {
   createVetaWalletActor,
   createAnonymousActor,
@@ -12,7 +12,6 @@ export const VetaIdentityContext = createContext({
 });
 
 // Determine the II identity provider URL.
-// Points to the II frontend canister, not the backend.
 function getIdentityProviderUrl() {
   const host = window.location.hostname;
   const isLocal =
@@ -22,12 +21,56 @@ function getIdentityProviderUrl() {
   return isLocal ? 'http://id.ai.localhost:8000' : 'https://id.ai';
 }
 
+// Session duration in nanoseconds (8 hours) and milliseconds
+const SESSION_DURATION_NS = BigInt(8) * BigInt(3_600_000_000_000);
+const SESSION_DURATION_MS = 8 * 60 * 60 * 1000;
+const SESSION_WARNING_MS = 10 * 60 * 1000; // warn 10 minutes before expiry
+
 export const VetaIdentityProvider = (props) => {
   const { children } = props;
   const [pending, setPending] = useState(true);
   const [principal, setPrincipal] = useState('');
   const [vetaWallet, setVetaWallet] = useState(undefined);
   const [client, setClient] = useState();
+  const [sessionExpiry, setSessionExpiry] = useState(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
+
+  // ── Session expiry timer ──────────────────────────────────────────
+
+  useEffect(() => {
+    if (!sessionExpiry) return;
+
+    const warningTimeout = setTimeout(() => {
+      // Session about to expire — check if still authenticated
+      if (client) {
+        client.isAuthenticated().then((isAuth) => {
+          if (!isAuth) {
+            handleSessionExpired();
+          }
+        });
+      }
+    }, Math.max(0, sessionExpiry - Date.now() - SESSION_WARNING_MS));
+
+    const expiryTimeout = setTimeout(() => {
+      handleSessionExpired();
+    }, Math.max(0, sessionExpiry - Date.now()));
+
+    return () => {
+      clearTimeout(warningTimeout);
+      clearTimeout(expiryTimeout);
+    };
+  }, [sessionExpiry, client]);
+
+  const handleSessionExpired = useCallback(() => {
+    setSessionExpired(true);
+    clearActor();
+    setEncryptionKey(null);
+    setPrincipal('');
+    setVetaWallet(undefined);
+    setSessionExpiry(null);
+  }, []);
+
+  // ── Auth init ─────────────────────────────────────────────────────
 
   const initAuth = async () => {
     try {
@@ -42,31 +85,43 @@ export const VetaIdentityProvider = (props) => {
         const principal = identity.getPrincipal();
         setPrincipal(principal);
         setEncryptionKey(principal);
+        setSessionExpiry(Date.now() + SESSION_DURATION_MS);
         await createVetaWalletActor(identity);
         await handleVetaProfile(principal);
       } else {
-        // Create anonymous actor for public queries (shared profiles, etc.)
         await createAnonymousActor();
       }
     } catch (e) {
-      console.warn('Auth init failed (expected without IC replica):', e.message);
+      console.warn('Auth init failed:', e.message);
+      // In production, don't fall back to mock — leave unauthenticated
+      if (import.meta.env.DEV) {
+        console.info('Dev mode: auth unavailable, app will run without canister connection');
+      }
     }
     setPending(false);
   };
 
+  // ── Login ─────────────────────────────────────────────────────────
+
   const signInByICProvider = async (callback) => {
+    // Only allow mock auth in development
     if (!client) {
-      // Fallback for dev without IC replica
-      const mockPrincipal = 'dev-' + Math.random().toString(36).slice(2, 10);
-      setPrincipal(mockPrincipal);
-      if (callback) callback();
-      return;
+      if (import.meta.env.DEV) {
+        const mockPrincipal = 'dev-' + Math.random().toString(36).slice(2, 10);
+        setPrincipal(mockPrincipal);
+        setEncryptionKey({ toString: () => mockPrincipal });
+        if (callback) callback();
+        return;
+      }
+      throw new Error('Authentication service unavailable');
     }
+
+    setSessionExpired(false);
 
     const { identity, principal } = await new Promise((resolve, reject) => {
       client.login({
         identityProvider: getIdentityProviderUrl(),
-        maxTimeToLive: BigInt(8) * BigInt(3_600_000_000_000), // 8 hours
+        maxTimeToLive: SESSION_DURATION_NS,
         onSuccess: () => {
           const identity = client.getIdentity();
           const principal = identity.getPrincipal();
@@ -78,12 +133,15 @@ export const VetaIdentityProvider = (props) => {
 
     setPrincipal(principal);
     setEncryptionKey(principal);
+    setSessionExpiry(Date.now() + SESSION_DURATION_MS);
     await createVetaWalletActor(identity);
     await handleVetaProfile(principal);
     if (callback) {
       callback();
     }
   };
+
+  // ── Profile fetch ─────────────────────────────────────────────────
 
   const handleVetaProfile = async (principal) => {
     try {
@@ -107,6 +165,8 @@ export const VetaIdentityProvider = (props) => {
     }
   };
 
+  // ── Logout ────────────────────────────────────────────────────────
+
   const signOut = async () => {
     if (client) {
       await client.logout();
@@ -115,6 +175,8 @@ export const VetaIdentityProvider = (props) => {
     setEncryptionKey(null);
     setPrincipal('');
     setVetaWallet(undefined);
+    setSessionExpiry(null);
+    setSessionExpired(false);
   };
 
   useEffect(() => {
@@ -130,6 +192,7 @@ export const VetaIdentityProvider = (props) => {
         signInByICProvider,
         vetaWallet,
         refreshWallet,
+        sessionExpired,
       }}>
       {!pending && children}
     </VetaIdentityContext.Provider>

@@ -8,11 +8,13 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import './_assets/scss/style.scss';
 import App from './app';
+import SessionExpiredDialog from './components/SessionExpiredDialog';
 
 ReactDOM.createRoot(document.getElementById('app')).render(
   <React.StrictMode>
     <ErrorBoundary>
       <VetaIdentityProvider>
+        <SessionExpiredDialog />
         <App />
       </VetaIdentityProvider>
     </ErrorBoundary>

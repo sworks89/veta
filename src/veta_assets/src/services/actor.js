@@ -1,8 +1,5 @@
 // Actor factory for canister communication.
 // Creates authenticated actors using the ic_env cookie pattern.
-//
-// When @icp-sdk/bindgen is set up, replace the manual idlFactory below
-// with the generated one from src/bindings/vetawallet.
 
 import { Actor, HttpAgent } from '@icp-sdk/core/agent';
 import { IDL } from '@icp-sdk/core/candid';
@@ -51,30 +48,44 @@ const Record = IDL.Record({
   signature: IDL.Text,
 });
 
+const ApiResult = IDL.Variant({
+  ok: IDL.Null,
+  err: IDL.Text,
+});
+
 const idlFactory = ({ IDL: _IDL }) =>
   IDL.Service({
     healthcheck: IDL.Func([], [IDL.Bool], []),
-    create: IDL.Func([UserData], [], []),
-    update: IDL.Func([UserData], [], []),
+    create: IDL.Func([UserData], [ApiResult], []),
+    update: IDL.Func([UserData], [ApiResult], []),
     get: IDL.Func([IDL.Principal], [UserData], ['query']),
-    shareProfile: IDL.Func([Profile], [], []),
+    shareProfile: IDL.Func([Profile], [ApiResult], []),
     getSharedProfile: IDL.Func([IDL.Text], [IDL.Opt(Profile)], ['query']),
-    addRecord: IDL.Func([Record], [], []),
+    unshareProfile: IDL.Func([IDL.Text], [ApiResult], []),
+    addRecord: IDL.Func([Record], [ApiResult], []),
     getRecord: IDL.Func([IDL.Text], [IDL.Opt(Record)], ['query']),
     getOwnId: IDL.Func([], [IDL.Principal], ['query']),
   });
+
+// ── Result helper ───────────────────────────────────────────────────
+
+/**
+ * Unwrap a Candid Result variant { ok: null } | { err: string }.
+ * Throws with the error message if the result is #err.
+ */
+export function unwrapResult(result) {
+  if ('ok' in result) return;
+  if ('err' in result) throw new Error(result.err);
+  throw new Error('Unexpected canister response');
+}
 
 // ── Actor management ────────────────────────────────────────────────
 
 let _actor = null;
 let _canisterId = null;
 
-// Try to read canister ID from ic_env cookie (set by asset canister or Vite dev server).
-// Falls back to the known mainnet canister ID.
 function getCanisterId() {
   if (_canisterId) return _canisterId;
-
-  // Try ic_env cookie
   try {
     const cookie = document.cookie
       .split(';')
@@ -91,8 +102,6 @@ function getCanisterId() {
   } catch {
     // cookie parsing failed
   }
-
-  // Fallback: mainnet canister ID
   _canisterId = 'k26ku-waaaa-aaaap-aahna-cai';
   return _canisterId;
 }
@@ -113,58 +122,33 @@ function getRootKey() {
   return undefined;
 }
 
-/**
- * Create (or re-create) the vetawallet actor with the given identity.
- * Call this after login to get an authenticated actor.
- */
 export async function createVetaWalletActor(identity) {
   const canisterId = getCanisterId();
   const rootKey = getRootKey();
-
   const agent = await HttpAgent.create({
     identity,
     host: window.location.origin,
     ...(rootKey ? { rootKey } : {}),
   });
-
-  _actor = Actor.createActor(idlFactory, {
-    agent,
-    canisterId,
-  });
-
+  _actor = Actor.createActor(idlFactory, { agent, canisterId });
   return _actor;
 }
 
-/**
- * Create an anonymous (unauthenticated) actor for query calls.
- */
 export async function createAnonymousActor() {
   const canisterId = getCanisterId();
   const rootKey = getRootKey();
-
   const agent = await HttpAgent.create({
     host: window.location.origin,
     ...(rootKey ? { rootKey } : {}),
   });
-
-  _actor = Actor.createActor(idlFactory, {
-    agent,
-    canisterId,
-  });
-
+  _actor = Actor.createActor(idlFactory, { agent, canisterId });
   return _actor;
 }
 
-/**
- * Get the current actor instance. Returns null if not yet created.
- */
 export function getVetaWalletActor() {
   return _actor;
 }
 
-/**
- * Clear the actor (on logout).
- */
 export function clearActor() {
   _actor = null;
 }
