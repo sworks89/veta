@@ -54,7 +54,10 @@ service : {
   healthcheck : () -> (bool);
   create : (UserData) -> (ApiResult);
   update : (UserData) -> (ApiResult);
+  deleteAccount : () -> (ApiResult);
   get : (UserId) -> (UserData) query;
+  getDataCount : (UserId) -> (nat) query;
+  getDataPage : (UserId, nat, nat) -> (vec Data) query;
   shareProfile : (Profile) -> (ApiResult);
   getSharedProfile : (UID) -> (opt Profile) query;
   unshareProfile : (UID) -> (ApiResult);

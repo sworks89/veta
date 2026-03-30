@@ -1,4 +1,6 @@
+import Array "mo:core/Array";
 import Map "mo:core/Map";
+import Nat "mo:core/Nat";
 import Text "mo:core/Text";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
@@ -13,6 +15,7 @@ persistent actor VetaWallet {
   type UID = Types.UID;
   type Profile = Types.Profile;
   type Record = Types.Record;
+  type Data = Types.Data;
 
   type ApiResult = Result.Result<(), Text>;
 
@@ -110,6 +113,17 @@ persistent actor VetaWallet {
     #ok();
   };
 
+  public shared(msg) func deleteAccount() : async ApiResult {
+    requireAuthenticated(msg.caller);
+    switch (Map.get(userDB, Principal.compare, msg.caller)) {
+      case (?_) {
+        Map.remove(userDB, Principal.compare, msg.caller);
+        #ok();
+      };
+      case null #err("Account not found");
+    };
+  };
+
   public query func get(userId : UserId) : async UserData {
     switch (Map.get(userDB, Principal.compare, userId)) {
       case (?user) user;
@@ -122,6 +136,30 @@ persistent actor VetaWallet {
           data = [];
         };
       };
+    };
+  };
+
+  // ── Paginated Queries ──────────────────────────────────────────────
+
+  public query func getDataCount(userId : UserId) : async Nat {
+    switch (Map.get(userDB, Principal.compare, userId)) {
+      case (?user) user.data.size();
+      case null 0;
+    };
+  };
+
+  public query func getDataPage(userId : UserId, offset : Nat, limit : Nat) : async [Data] {
+    switch (Map.get(userDB, Principal.compare, userId)) {
+      case (?user) {
+        let size = user.data.size();
+        if (offset >= size) return [];
+        let end = if (offset + limit > size) size else offset + limit;
+        let result = Array.tabulate<Data>(end - offset, func(i) {
+          user.data[offset + i];
+        });
+        result;
+      };
+      case null [];
     };
   };
 

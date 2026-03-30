@@ -1,5 +1,4 @@
 // Actor factory for canister communication.
-// Creates authenticated actors using the ic_env cookie pattern.
 
 import { Actor, HttpAgent } from '@icp-sdk/core/agent';
 import { IDL } from '@icp-sdk/core/candid';
@@ -58,7 +57,10 @@ const idlFactory = ({ IDL: _IDL }) =>
     healthcheck: IDL.Func([], [IDL.Bool], []),
     create: IDL.Func([UserData], [ApiResult], []),
     update: IDL.Func([UserData], [ApiResult], []),
+    deleteAccount: IDL.Func([], [ApiResult], []),
     get: IDL.Func([IDL.Principal], [UserData], ['query']),
+    getDataCount: IDL.Func([IDL.Principal], [IDL.Nat], ['query']),
+    getDataPage: IDL.Func([IDL.Principal, IDL.Nat, IDL.Nat], [IDL.Vec(Data)], ['query']),
     shareProfile: IDL.Func([Profile], [ApiResult], []),
     getSharedProfile: IDL.Func([IDL.Text], [IDL.Opt(Profile)], ['query']),
     unshareProfile: IDL.Func([IDL.Text], [ApiResult], []),
@@ -69,10 +71,6 @@ const idlFactory = ({ IDL: _IDL }) =>
 
 // ── Result helper ───────────────────────────────────────────────────
 
-/**
- * Unwrap a Candid Result variant { ok: null } | { err: string }.
- * Throws with the error message if the result is #err.
- */
 export function unwrapResult(result) {
   if ('ok' in result) return;
   if ('err' in result) throw new Error(result.err);
