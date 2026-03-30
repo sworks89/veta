@@ -1,18 +1,29 @@
-import React from "react";
-import Home from "./components/home";
-import Greeting from "./components/greeting";
-import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+// routing
+
+import { HashRouter, BrowserRouter } from 'react-router-dom';
+// defaultTheme
+import themes from './themes';
+
+// project imports
+import NavigationScroll from './layout/NavigationScroll';
+import Routes from './routes';
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline, StyledEngineProvider } from '@mui/material';
 
 function App() {
-
-  return (
-    <Router>
-      <Routes>
-        <Route exact path="/" element={<Home name="Base Dfinity + ReactJs: "/>}/>
-        <Route path="/greeting" element={<Greeting/>}/>
-      </Routes>
-    </Router>
-    );
+	const customization = {};
+	return (
+		<HashRouter>
+			<StyledEngineProvider injectFirst>
+				<ThemeProvider theme={themes(customization)}>
+					<CssBaseline />
+					<NavigationScroll>
+						<Routes />
+					</NavigationScroll>
+				</ThemeProvider>
+			</StyledEngineProvider>
+		</HashRouter>
+	);
 }
 
 export default App;

@@ -1,61 +1,67 @@
 {
   "name": "veta",
-  "version": "0.1.0",
-  "description": "Web3 Data Wallet",
+  "version": "0.2.0",
+  "description": "Web3 Data Wallet - Own your DATA",
+  "private": true,
+  "type": "module",
   "keywords": [
     "Internet Computer",
     "Motoko",
-    "JavaScript",
-    "Canister"
+    "React",
+    "Web3",
+    "Data Wallet"
   ],
   "scripts": {
-    "build": "webpack",
-    "prebuild": "npm run copy:types",
-    "start": "webpack serve --mode development --env development",
-    "prestart": "npm run copy:types",
-    "copy:types": "rsync -avr .dfx/$(echo ${DFX_NETWORK:-'**'})/canisters/** --exclude='assets/' --exclude='idl/' --exclude='*.wasm' --delete src/declarations"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@fontsource/roboto": "^5.1.1",
+    "@icp-sdk/auth": "^5.0.0",
+    "@icp-sdk/core": "^5.0.0",
+    "@mui/icons-material": "^6.4.0",
+    "@mui/lab": "^6.0.0-beta.22",
+    "@mui/material": "^6.4.0",
+    "@mui/x-date-pickers": "^8.27.2",
+    "@tabler/icons": "^1.119.0",
+    "apexcharts": "^4.3.0",
+    "axios": "^1.7.0",
+    "crypto-js": "^4.2.0",
+    "framer-motion": "^11.15.0",
+    "material-ui-popup-state": "^5.3.0",
+    "qrcode.react": "^4.2.0",
+    "react": "^18.3.1",
+    "react-apexcharts": "^1.7.0",
+    "react-device-detect": "^2.2.3",
+    "react-dom": "^18.3.1",
+    "react-perfect-scrollbar": "^1.5.8",
+    "react-router-dom": "^7.1.0",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.10",
-    "@babel/plugin-transform-runtime": "^7.17.10",
-    "@babel/preset-env": "^7.17.10",
-    "@babel/preset-react": "^7.16.7",
-    "@dfinity/agent": "0.11.1",
-    "@dfinity/candid": "0.11.1",
-    "@dfinity/principal": "0.11.1",
-    "assert": "2.0.0",
-    "babel-loader": "^8.2.5",
-    "buffer": "6.0.3",
-    "copy-webpack-plugin": "^10.2.4",
-    "css-loader": "^6.7.1",
-    "events": "3.3.0",
-    "html-webpack-plugin": "^5.5.0",
-    "process": "0.11.10",
-    "stream-browserify": "3.0.0",
-    "style-loader": "^3.3.0",
-    "terser-webpack-plugin": "5.3.1",
-    "util": "0.12.4",
-    "webpack": "^5.72.1",
-    "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.9.0"
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^25.0.1",
+    "sass-embedded": "^1.83.0",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8"
   },
   "engines": {
-    "node": "^12 || ^14 || ^16 || ^18"
+    "node": ">=22"
   },
   "browserslist": [
     "last 2 chrome version",
     "last 2 firefox version",
     "last 2 safari version",
     "last 2 edge version"
-  ],
-  "dependencies": {
-    "@emotion/react": "^11.9.3",
-    "@emotion/styled": "^11.9.3",
-    "@fontsource/roboto": "^4.5.7",
-    "@mui/icons-material": "^5.8.3",
-    "@mui/material": "^5.8.3",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
-    "react-router-dom": "^6.3.0"
-  }
+  ]
 }
