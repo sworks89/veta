@@ -5,6 +5,7 @@ import {
   getVetaWalletActor,
   clearActor,
 } from '../services/actor';
+import { setEncryptionKey } from '../utils/crypto';
 
 export const VetaIdentityContext = createContext({
   principal: '',
@@ -40,6 +41,7 @@ export const VetaIdentityProvider = (props) => {
         const identity = authClient.getIdentity();
         const principal = identity.getPrincipal();
         setPrincipal(principal);
+        setEncryptionKey(principal);
         await createVetaWalletActor(identity);
         await handleVetaProfile(principal);
       } else {
@@ -75,6 +77,7 @@ export const VetaIdentityProvider = (props) => {
     });
 
     setPrincipal(principal);
+    setEncryptionKey(principal);
     await createVetaWalletActor(identity);
     await handleVetaProfile(principal);
     if (callback) {
@@ -109,6 +112,7 @@ export const VetaIdentityProvider = (props) => {
       await client.logout();
     }
     clearActor();
+    setEncryptionKey(null);
     setPrincipal('');
     setVetaWallet(undefined);
   };

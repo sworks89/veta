@@ -63,10 +63,20 @@ persistent actor VetaWallet {
     requireOwner(msg.caller, userData.id);
     validateText(userData.name, 128, "name");
     if (userData.data.size() > 1000) {
-      Runtime.trap("data array exceeds max size");
+      Runtime.trap("data array exceeds max size of 1000");
     };
     if (userData.profiles.size() > 50) {
-      Runtime.trap("profiles array exceeds max size");
+      Runtime.trap("profiles array exceeds max size of 50");
+    };
+    for (entry in userData.data.vals()) {
+      validateText(entry.dataContent, 10240, "dataContent");
+      validateText(entry.dataType, 128, "dataType");
+    };
+    for (profile in userData.profiles.vals()) {
+      validateText(profile.profileName, 128, "profileName");
+      if (profile.data.size() > 500) {
+        Runtime.trap("profile data array exceeds max size of 500");
+      };
     };
     Map.add(userDB, Principal.compare, userData.id, userData);
   };
