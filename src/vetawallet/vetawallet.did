@@ -1,0 +1,58 @@
+type UID = text;
+type UserId = principal;
+type PlatformId = principal;
+type Timestamp = int;
+
+type DataCategory = variant {
+  personal;
+  social;
+  financial;
+};
+
+type Data = record {
+  dataId : UID;
+  uid : UserId;
+  platformId : PlatformId;
+  signature : text;
+  date : Timestamp;
+  dataCategory : DataCategory;
+  dataType : text;
+  dataContent : text;
+};
+
+type Record = record {
+  recordId : UID;
+  userId : UserId;
+  platformId : PlatformId;
+  dataId : UID;
+  date : Timestamp;
+  signature : text;
+};
+
+type Profile = record {
+  id : UID;
+  profileName : text;
+  isDefault : bool;
+  data : vec Data;
+  userId : UserId;
+};
+
+type UserData = record {
+  id : UserId;
+  verified : bool;
+  name : text;
+  profiles : vec Profile;
+  data : vec Data;
+};
+
+service : {
+  healthcheck : () -> (bool);
+  create : (UserData) -> ();
+  update : (UserData) -> ();
+  get : (UserId) -> (UserData) query;
+  shareProfile : (Profile) -> ();
+  getSharedProfile : (UID) -> (opt Profile) query;
+  addRecord : (Record) -> ();
+  getRecord : (UID) -> (opt Record) query;
+  getOwnId : () -> (UserId) query;
+}

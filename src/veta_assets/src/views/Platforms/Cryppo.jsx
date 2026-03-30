@@ -15,7 +15,6 @@ import TotalGrowthBarChart from '../../components/TotalGrowthBarChart';
 import useMainLayout from '../../layout/MainLayout/MainLayoutContext';
 import TransactionsCard from '../../components/Cryppo/TransactionsCard';
 import HoldingCard from '../../components/Cryppo/HoldingCard';
-import * as CryppoIcServices from '../../services/CryppoServices.ic';
 import AssetsCard from '../../components/Cryppo/AssetsCard';
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
@@ -73,7 +72,7 @@ const CryppoPlatformPage = () => {
 			assetCount: symbolsList.length,
 		});
 
-		setLoading(true);
+		setLoading(false);
 	};
 
 	return (

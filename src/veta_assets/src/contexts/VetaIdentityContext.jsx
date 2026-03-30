@@ -1,4 +1,10 @@
 import { useState, useEffect, useContext, createContext } from 'react';
+import {
+  createVetaWalletActor,
+  createAnonymousActor,
+  getVetaWalletActor,
+  clearActor,
+} from '../services/actor';
 
 export const VetaIdentityContext = createContext({
   principal: '',
@@ -19,7 +25,7 @@ export const VetaIdentityProvider = (props) => {
   const { children } = props;
   const [pending, setPending] = useState(true);
   const [principal, setPrincipal] = useState('');
-  const [vetaWallet, setVetaWallet] = useState();
+  const [vetaWallet, setVetaWallet] = useState(undefined);
   const [client, setClient] = useState();
 
   const initAuth = async () => {
@@ -34,7 +40,11 @@ export const VetaIdentityProvider = (props) => {
         const identity = authClient.getIdentity();
         const principal = identity.getPrincipal();
         setPrincipal(principal);
+        await createVetaWalletActor(identity);
         await handleVetaProfile(principal);
+      } else {
+        // Create anonymous actor for public queries (shared profiles, etc.)
+        await createAnonymousActor();
       }
     } catch (e) {
       console.warn('Auth init failed (expected without IC replica):', e.message);
@@ -63,7 +73,9 @@ export const VetaIdentityProvider = (props) => {
         onError: reject,
       });
     });
+
     setPrincipal(principal);
+    await createVetaWalletActor(identity);
     await handleVetaProfile(principal);
     if (callback) {
       callback();
@@ -72,21 +84,23 @@ export const VetaIdentityProvider = (props) => {
 
   const handleVetaProfile = async (principal) => {
     try {
-      // TODO: Replace with actor call via @icp-sdk/bindgen when canister is deployed
-      // const vetaProfile = await vetawallet.get(principal);
-      // setVetaWallet(vetaProfile);
+      const actor = getVetaWalletActor();
+      if (!actor) return;
+      const vetaProfile = await actor.get(principal);
+      setVetaWallet(vetaProfile);
     } catch (e) {
-      console.log(e);
+      console.warn('Failed to fetch wallet profile:', e);
     }
   };
 
   const refreshWallet = async () => {
     try {
-      // TODO: Replace with actor call via @icp-sdk/bindgen when canister is deployed
-      // const vetaProfile = await vetawallet.get(principal);
-      // setVetaWallet(vetaProfile);
+      const actor = getVetaWalletActor();
+      if (!actor || !principal) return;
+      const vetaProfile = await actor.get(principal);
+      setVetaWallet(vetaProfile);
     } catch (e) {
-      console.log(e);
+      console.warn('Failed to refresh wallet:', e);
     }
   };
 
@@ -94,6 +108,7 @@ export const VetaIdentityProvider = (props) => {
     if (client) {
       await client.logout();
     }
+    clearActor();
     setPrincipal('');
     setVetaWallet(undefined);
   };

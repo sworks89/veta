@@ -15,7 +15,6 @@ import {
 	IconButton,
 	Stack,
 } from '@mui/material';
-import { vetawallet } from '../../../declarations/vetawallet';
 import VetaLogo from '../_assets/images/veta-logo.svg';
 import DfinityLogo from '../_assets/images/infinity_logo.svg';
 import background1 from '../_assets/images/home/background1.jpeg';
