@@ -1,5 +1,4 @@
-import { IconDashboard, IconBrandChrome, IconHelp, IconSocial, IconWallet, IconUser, IconQrcode, IconActivity, IconDatabase } from '@tabler/icons';
- 
+import { IconDashboard, IconHelp, IconUser, IconQrcode, IconDatabase } from '@tabler/icons';
 
 const dashboard = {
 	id: 'root',
@@ -30,18 +29,9 @@ const dashboard = {
 			icon: IconUser,
 			breadcrumbs: false,
 		},
-
-		{
-			id: 'wallet',
-			title: 'Wallet',
-			type: 'item',
-			url: 'dashboard/wallet',
-			icon: IconWallet,
-			breadcrumbs: false,
-		},
 		{
 			id: 'qrcode',
-			title: 'QR Code',
+			title: 'QR Codes',
 			type: 'item',
 			url: 'dashboard/qrcode',
 			icon: IconQrcode,
@@ -49,29 +39,7 @@ const dashboard = {
 		},
 	],
 };
-const platforms = {
-	id: 'platforms',
-	title: 'Platforms',
-	type: 'group',
-	children: [
-		{
-			id: 'cryppo',
-			title: 'Cryppo',
-			type: 'item',
-			url: 'dashboard/platforms/cryppo',
-			icon: IconActivity,
-			breadcrumbs: false,
-		},
-		{
-			id: 'socialnetwork',
-			title: 'Social Network',
-			type: 'item',
-			url: 'dashboard/platforms/socialnetwork',
-			icon: IconSocial,
-			breadcrumbs: false,
-		},
-	],
-};
+
 const help = {
 	id: 'help',
 	title: 'Support',
@@ -87,8 +55,9 @@ const help = {
 		},
 	],
 };
+
 const menuItems = {
-	items: [dashboard, platforms, help],
+	items: [dashboard, help],
 };
 
 export default menuItems;
