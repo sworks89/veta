@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import { getVetaWalletActor } from '../services/actor';
+import { getVetaWalletActor, unwrapResult } from '../services/actor';
 import useVetaIdentity from '../contexts/VetaIdentityContext';
 
 const OnboardingDialog = () => {
@@ -41,17 +41,18 @@ const OnboardingDialog = () => {
       const actor = getVetaWalletActor();
       if (!actor) throw new Error('Not connected to canister');
 
-      await actor.create({
+      const result = await actor.create({
         id: principal,
         name: trimmed,
         verified: false,
         profiles: [],
         data: [],
       });
+      unwrapResult(result);
       await refreshWallet();
     } catch (e) {
       console.error('Account creation failed:', e);
-      setError('Failed to create account. Please try again.');
+      setError(e.message || 'Failed to create account. Please try again.');
     } finally {
       setSaving(false);
     }

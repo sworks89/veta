@@ -17,7 +17,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { v4 as uuidV4 } from 'uuid';
 import MainCard from '../../ui-component/cards/MainCard';
 import * as Crypto from '../../utils/crypto';
-import { getVetaWalletActor } from '../../services/actor';
+import { getVetaWalletActor, unwrapResult } from '../../services/actor';
 import useVetaIdentity from '../../contexts/VetaIdentityContext';
 
 const DATA_TYPES = {
@@ -110,7 +110,8 @@ const DataCenter = () => {
 
       const updatedData = [...(vetaWallet.data || []), newData];
       const updatedUser = { ...vetaWallet, data: updatedData };
-      await actor.update(updatedUser);
+      const result = await actor.update(updatedUser);
+      unwrapResult(result);
       await refreshWallet();
 
       // Reset form

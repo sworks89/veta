@@ -1,10 +1,9 @@
 import { lazy } from 'react';
-// project imports
 import MainLayout from '../layout/MainLayout';
-// import Loadable from '../ui-component/Loadable';
 import { MainLayoutProvider } from '../layout/MainLayout/MainLayoutContext';
 import Loadable from '../ui-component/Loadable';
-import Dashboard from '../views/Dashboard'; 
+import AuthGuard from '../components/AuthGuard';
+import Dashboard from '../views/Dashboard';
 import HelpPage from '../views/Help';
 import CryppoPlatformPage from '../views/Platforms/Cryppo';
 import SocialNetworkPlatformPage from '../views/Platforms/SocialNetwork';
@@ -14,16 +13,15 @@ import ProfileDetail from '../views/Profiles/ProfileDetail';
 import QrCodePage from '../views/QrCode';
 import WalletPage from '../views/Wallet';
 
-// // sample page routing
 const SamplePage = Loadable(lazy(() => import('../views/sample-page')));
-
-// ==============================|| MAIN ROUTING ||============================== //
 
 const DashboardRoutes = {
 	element: (
-		<MainLayoutProvider>
-			<MainLayout />
-		</MainLayoutProvider>
+		<AuthGuard>
+			<MainLayoutProvider>
+				<MainLayout />
+			</MainLayoutProvider>
+		</AuthGuard>
 	),
 	children: [
 		{
@@ -38,7 +36,6 @@ const DashboardRoutes = {
 			path: 'dashboard/profiles',
 			element: <ProfilesPage />,
 		},
-
 		{
 			path: 'dashboard/profiles/:profileId',
 			element: <ProfileDetail />,

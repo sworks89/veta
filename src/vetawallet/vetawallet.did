@@ -45,14 +45,20 @@ type UserData = record {
   data : vec Data;
 };
 
+type ApiResult = variant {
+  ok;
+  err : text;
+};
+
 service : {
   healthcheck : () -> (bool);
-  create : (UserData) -> ();
-  update : (UserData) -> ();
+  create : (UserData) -> (ApiResult);
+  update : (UserData) -> (ApiResult);
   get : (UserId) -> (UserData) query;
-  shareProfile : (Profile) -> ();
+  shareProfile : (Profile) -> (ApiResult);
   getSharedProfile : (UID) -> (opt Profile) query;
-  addRecord : (Record) -> ();
+  unshareProfile : (UID) -> (ApiResult);
+  addRecord : (Record) -> (ApiResult);
   getRecord : (UID) -> (opt Record) query;
   getOwnId : () -> (UserId) query;
 }
