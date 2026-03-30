@@ -1,57 +1,93 @@
-import Database "./database";
+import Map "mo:core/Map";
+import Text "mo:core/Text";
+import Principal "mo:core/Principal";
+import Runtime "mo:core/Runtime";
 import Types "./types";
-import Utils "./utils";
-import HashMap "mo:base/HashMap";
-import Text "mo:base/Text";
 
-actor VetaWallet {
-  var db: Database.Directory = Database.Directory();
-	
+persistent actor VetaWallet {
+
   type NewUserData = Types.NewUserData;
   type UserData = Types.UserData;
   type UserId = Types.UserId;
-	type UID = Types.UID;
-	type Profile = Types.Profile;
+  type UID = Types.UID;
+  type Profile = Types.Profile;
   type Record = Types.Record;
 
+  // ── State (implicitly stable in persistent actor) ──────────────────
 
-	func isUidEq(x: UID, y: UID): Bool { x == y };
+  let userDB = Map.empty<UserId, UserData>();
+  let sharedProfiles = Map.empty<UID, Profile>();
+  let dataRegistry = Map.empty<UID, Record>();
 
-	let sharedProfile = HashMap.HashMap<UID, Profile>(1, isUidEq, Text.hash);
-  let dataRegistry = HashMap.HashMap<UID, Record>(1, isUidEq, Text.hash);
+  // ── Guards ─────────────────────────────────────────────────────────
 
-  // Healthcheck
-  public func healthcheck(): async Bool { true };
-
-  // UserData
-  public shared(msg) func create(userData: UserData): async () {
-    db.createUser(msg.caller, userData);
+  private func requireAuthenticated(caller : Principal) {
+    if (Principal.isAnonymous(caller)) {
+      Runtime.trap("anonymous caller not allowed");
+    };
   };
 
-  public shared(msg) func update(userData: UserData): async () {
-    db.updateUser(userData.id, userData);
+  // ── Healthcheck ────────────────────────────────────────────────────
+
+  public func healthcheck() : async Bool { true };
+
+  // ── User CRUD ──────────────────────────────────────────────────────
+
+  public shared(msg) func create(userData : UserData) : async () {
+    requireAuthenticated(msg.caller);
+    let stored : UserData = {
+      id = msg.caller;
+      verified = false;
+      name = userData.name;
+      profiles = userData.profiles;
+      data = userData.data;
+    };
+    Map.add(userDB, Principal.compare, msg.caller, stored);
   };
 
-  public query func get(userId: UserId): async UserData {
-    Utils.getUserData(db, userId)
+  public shared(msg) func update(userData : UserData) : async () {
+    requireAuthenticated(msg.caller);
+    Map.add(userDB, Principal.compare, userData.id, userData);
   };
 
-	public func shareProfile(profile: Profile): async () {
-		sharedProfile.put(profile.id, profile);
-	};
-
-	public query func getSharedProfile(id: UID): async ?Profile {
-		sharedProfile.get(id);
-	};
-
-  public func addRecord(record: Record): async () {
-    dataRegistry.put(record.recordId, record);
+  public query func get(userId : UserId) : async UserData {
+    switch (Map.get(userDB, Principal.compare, userId)) {
+      case (?user) user;
+      case null {
+        {
+          id = userId;
+          verified = false;
+          name = "";
+          profiles = [];
+          data = [];
+        };
+      };
+    };
   };
 
-  public query func getRecord(id: UID): async ?Record {
-		dataRegistry.get(id);
-	};
+  // ── Profile Sharing ────────────────────────────────────────────────
 
-  public shared query(msg) func getOwnId(): async UserId { msg.caller };
+  public shared(msg) func shareProfile(profile : Profile) : async () {
+    requireAuthenticated(msg.caller);
+    Map.add(sharedProfiles, Text.compare, profile.id, profile);
+  };
 
+  public query func getSharedProfile(id : UID) : async ?Profile {
+    Map.get(sharedProfiles, Text.compare, id);
+  };
+
+  // ── Data Registry ──────────────────────────────────────────────────
+
+  public shared(msg) func addRecord(record : Record) : async () {
+    requireAuthenticated(msg.caller);
+    Map.add(dataRegistry, Text.compare, record.recordId, record);
+  };
+
+  public query func getRecord(id : UID) : async ?Record {
+    Map.get(dataRegistry, Text.compare, id);
+  };
+
+  // ── Identity ───────────────────────────────────────────────────────
+
+  public shared query(msg) func getOwnId() : async UserId { msg.caller };
 };

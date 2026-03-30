@@ -1,5 +1,5 @@
 import { vetawallet } from '../../../declarations/vetawallet';
-import { Principal } from '@dfinity/principal';
+import { Principal } from '@icp-sdk/core/principal';
 import { v4 as uuidV4 } from 'uuid';
 
 export const addProfile = async (principal, profile) => {
