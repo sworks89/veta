@@ -17,7 +17,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { vetawallet } from '../../../declarations/vetawallet';
 import { QRCodeSVG } from 'qrcode.react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import * as VetaWalletServices from '../services/VetaWalletServices.ic';

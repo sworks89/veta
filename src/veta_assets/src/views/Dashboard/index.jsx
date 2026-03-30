@@ -1,18 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { vetawallet } from '../../../../declarations/vetawallet';
-import { Principal } from '@icp-sdk/core/principal';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { Button } from '@mui/material';
-// import { mainListItems, secondaryListItems } from './listItems';
 import { Paper, Card } from '@mui/material';
 import * as Crypto from '../../utils/crypto';
 import useVetaIdentity from '../../contexts/VetaIdentityContext';
+import { getVetaWalletActor } from '../../services/actor';
+
 const apiUrl = 'https://us-central1-thanhpage-d.cloudfunctions.net/api/v1';
+
 function Copyright(props) {
 	return (
 		<Typography variant='body2' color='text.secondary' align='center' {...props}>
@@ -40,14 +40,19 @@ function Onboard(props) {
 }
 
 function Dashboard() {
-	const { principal } = useVetaIdentity();
+	const { principal, vetaWallet, refreshWallet } = useVetaIdentity();
 
 	const [userData, setUserData] = useState();
-	const [anchorElUser, setAnchorElUser] = useState(null);
 	const [encrypted, setEncrypted] = useState(null);
 	const [session, setSession] = useState(null);
 	const [kycUrl, setKycUrl] = useState('');
 	const kycResultTimer = useRef();
+
+	useEffect(() => {
+		if (vetaWallet) {
+			setUserData(vetaWallet);
+		}
+	}, [vetaWallet]);
 
 	useEffect(() => {
 		return () => {
@@ -65,127 +70,22 @@ function Dashboard() {
 	};
 
 	const getKycResult = async () => {
+		const actor = getVetaWalletActor();
+		if (!actor || !principal) return;
+
 		const { data } = await axios.get(`${apiUrl}/identomat/result/${session}`);
 		const { result } = data;
 
 		if (result == 'approved') {
-			const {
-				// {
-				//     "result": "approved",
-				//     "similarity": 0.9034052020554081,
-				//     "live": false,
-				//     "document_type": "id",
-				//     "general_document": [],
-				//     "reject_reason": {
-				//         "value": "",
-				//         "description": ""
-				//     },
-				//     "result_comment": "",
-				//     "face_images": 1,
-				//     "id_card_front": {
-				//         "Sex_en_US": "M",
-				//         "Date_of_Birth_en_US": "MM/DD/YYYY",
-				//         "Date_of_Expiry_en_US": "MM/DD/YYYY",
-				//         "Date_of_Issue_en_US": "MM/DD/YYYY",
-				//         "Issuing_State_Code_en_US": "ARE",
-				//         "Date_of_Birth_ISO": "1989-11-20T00:00:00.000Z",
-				//         "Date_of_Expiry_ISO": "2025-03-23T00:00:00.000Z"
-				//     },
-				//     "id_card_back": {
-				//         "Document_Number_en_US": "xxxxxxxx",
-				//         "Issuing_State_Code_en_US": "ARE",
-				//         "Given_Names_en_US": "TRAN MINH",
-				//         "Surname_en_US": "THANH",
-				//         "Nationality_Code_en_US": "VNM",
-				//         "Sex_en_US": "M",
-				//         "Personal_Number_en_US": "xxxxxxxxxx",
-				//         "Date_of_Birth_en_US": "MM/DD/YYYY",
-				//         "Date_of_Expiry_en_US": "MM/DD/YYYY",
-				//         "Nationality_en_US": "VNM",
-				//         "Date_of_Birth_ISO": "1989-11-20T00:00:00.000Z",
-				//         "Date_of_Expiry_ISO": "2025-03-23T00:00:00.000Z"
-				//     },
-				//     "suggested": {},
-				//     "person": {
-				//         "first_name": "TRAN MINH",
-				//         "last_name": "THANH",
-				//         "birthday": "11/20/1989",
-				//         "citizenship": "ARE",
-				//         "nationality": "VNM",
-				//         "document_number": "xxxxxxxx",
-				//         "document_issued": "MM/DD/YYYY",
-				//         "document_expires": "MM/DD/YYYY",
-				//         "birthday_time": "1989-11-20T00:00:00.000Z",
-				//         "age": 32,
-				//         "document_expires_time": "2025-03-23T00:00:00.000Z",
-				//         "issuing_state": "ARE",
-				//         "sex": "M",
-				//         "personal_number": "xxxxxxxxx",
-				//         "status": "FIELDS_MISMATCH"
-				//     }
-				// }
+			const { person } = data;
+			const { first_name } = person;
 
-				result,
-				similarity,
-				live,
-				document_type,
-				general_document,
-				reject_reason,
-				result_comment,
-				face_images,
-				id_card_front,
-				id_card_back,
-				suggested,
-				person,
-			} = data;
-			const { value, description } = reject_reason;
-			// const {
-			// 	Sex_en_US,
-			// 	Date_of_Birth_en_US,
-			// 	Date_of_Expiry_en_US,
-			// 	Date_of_Issue_en_US,
-			// 	Issuing_State_Code_en_US,
-			// 	Date_of_Birth_ISO,
-			// 	Date_of_Expiry_ISO,
-			// } = id_card_front;
-			// const {
-			// 	Document_Number_en_US,
-			// 	Issuing_State_Code_en_US,
-			// 	Given_Names_en_US,
-			// 	Surname_en_US,
-			// 	Nationality_Code_en_US,
-			// 	Sex_en_US,
-			// 	Personal_Number_en_US,
-			// 	Date_of_Birth_en_US,
-			// 	Date_of_Expiry_en_US,
-			// 	Nationality_en_US,
-			// 	Date_of_Birth_ISO,
-			// 	Date_of_Expiry_ISO,
-			// } = id_card_back;
-			const {
-				first_name,
-				last_name,
-				birthday,
-				citizenship,
-				nationality,
-				document_number,
-				document_issued,
-				document_expires,
-				birthday_time,
-				age,
-				document_expires_time,
-				issuing_state,
-				sex,
-				personal_number,
-				status,
-			} = person;
-			// Found result
-			setKycUrl();
-			let _userData = await vetawallet.get(principal);
-			_userData.verified = true;
-			_userData.name = first_name;
-			await vetawallet.update(_userData);
+			setKycUrl('');
+			let _userData = await actor.get(principal);
+			_userData = { ..._userData, verified: true, name: first_name };
+			await actor.update(_userData);
 			setUserData(_userData);
+			refreshWallet();
 			if (kycResultTimer.current) {
 				clearInterval(kycResultTimer.current);
 			}
@@ -201,36 +101,41 @@ function Dashboard() {
 	}, [kycUrl]);
 
 	const skipKyc = async () => {
+		const actor = getVetaWalletActor();
+		if (!actor || !principal) return;
+
 		setSession(null);
-		let _userData = await vetawallet.get(principal);
-		_userData.verified = true;
-		_userData.name = 'Anon';
-		let res = await vetawallet.update(_userData);
-		console.log(res);
+		let _userData = await actor.get(principal);
+		_userData = { ..._userData, verified: true, name: 'Anon' };
+		await actor.update(_userData);
+		setUserData(_userData);
+		refreshWallet();
 	};
 
 	const getUserData = async () => {
-		const res = await vetawallet.get(principal);
-		// console.log(res);
+		const actor = getVetaWalletActor();
+		if (!actor || !principal) return;
+
+		const res = await actor.get(principal);
 		setUserData(res);
 	};
 
 	const signData = () => {
-		const signature = Crypto.signData("hello");
-		console.log(signature);
-	}
+		const signature = Crypto.signData('hello');
+		console.log('Signature:', signature);
+	};
 
 	const encryptData = () => {
-		const test = {id:1, interest: 'basketball'};
+		const test = { id: 1, interest: 'basketball' };
 		const encryptedData = Crypto.encryptData(test);
-		setEncrypted(encryptedData)
-		console.log(encryptedData);
-	}
+		setEncrypted(encryptedData);
+		console.log('Encrypted:', encryptedData);
+	};
 
 	const decryptData = () => {
 		const decrypted = Crypto.decryptData(encrypted);
-		console.log(decrypted);
-	}
+		console.log('Decrypted:', decrypted);
+	};
 
 	return (
 		<Box
@@ -259,17 +164,14 @@ function Dashboard() {
 						{userData && (
 							<span>{`${userData.id} ${userData.name} - verified: ${userData.verified}`}</span>
 						)}
-						{/* <QRCode value='https://reactjs.org/' renderAs='canvas' /> */}
 					</Card>
 					<Card>
-						{userData &&
-							userData.data.map((d) => (
-								<>
-									<p>{d.dataType}</p>
-									<p>{d.dataContent}</p>
-								</>
-							))}
-						{/* <QRCode value='https://reactjs.org/' renderAs='canvas' /> */}
+						{userData?.data?.map((d, idx) => (
+							<div key={idx}>
+								<p>{d.dataType}</p>
+								<p>{d.dataContent}</p>
+							</div>
+						))}
 					</Card>
 				</Paper>
 				<Copyright sx={{ pt: 4 }} />

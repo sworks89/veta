@@ -3,11 +3,14 @@ import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import ProfileCard from '../../components/ProfileCard';
 import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
 import * as VetaWalletServices from '../../services/VetaWalletServices.ic';
 
 const ViewSharedProfile = () => {
 	const { profileId } = useParams();
 	const [profile, setProfile] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
 		if (profileId) {
@@ -16,8 +19,18 @@ const ViewSharedProfile = () => {
 	}, [profileId]);
 
 	const fetchProfile = async (id) => {
-		const _profile = await VetaWalletServices.getSharedProfile(id);
-		setProfile(_profile[0]);
+		try {
+			const result = await VetaWalletServices.getSharedProfile(id);
+			// Candid opt returns [value] or [] — extract the inner value
+			const found = Array.isArray(result) ? result[0] : result;
+			setProfile(found || false);
+		} catch (e) {
+			console.warn('Failed to fetch shared profile:', e);
+			setError(e.message);
+			setProfile(false);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -30,10 +43,14 @@ const ViewSharedProfile = () => {
 				width: '100vw',
 				height: '100vh',
 			}}>
-			{profile !== null ? (
-				<>{profile ? <ProfileCard readonly profile={profile} /> : <h3>Profile not found</h3>}</>
-			) : (
+			{loading ? (
 				<CircularProgress />
+			) : profile ? (
+				<ProfileCard readonly profile={profile} />
+			) : (
+				<Typography variant='h5' color='text.secondary'>
+					{error ? 'Unable to load profile' : 'Profile not found'}
+				</Typography>
 			)}
 		</Box>
 	);

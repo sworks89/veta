@@ -29,7 +29,7 @@ const AddProfileCard = () => {
 			await VetaWalletServices.addProfile(principal, profile);
 			// Todo: Auto refresh wallet realtime
 			refreshWallet();
-			seOpen(false);
+			setOpen(false);
 		} catch (e) {
 			console.error(e);
 		} finally {
@@ -55,7 +55,7 @@ const AddProfileCard = () => {
 					</IconButton>
 				</CardContent>
 			</Card>
-			<Dialog fullWidth={true} maxWidth={'xs'} open={open} onClose={() => setOpenShare(false)}>
+			<Dialog fullWidth={true} maxWidth={'xs'} open={open} onClose={() => setOpen(false)}>
 				<DialogTitle>
 					<Typography component='h3' variant='h3'>
 						Add profile
