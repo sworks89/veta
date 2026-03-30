@@ -24,7 +24,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import * as VetaWalletServices from '../services/VetaWalletServices.ic';
 
-const ProfileCard = ({ readonly, profile }) => {
+const ProfileCard = ({ readonly, profile, onDelete }) => {
 	const navigate = useNavigate();
 	const { id: profileId, profileName, verified, data = [], isDefault } = profile;
 	const [openShare, setOpenShare] = useState(false);
@@ -98,6 +98,11 @@ const ProfileCard = ({ readonly, profile }) => {
 						{profileId && (
 							<Button size='small' onClick={() => navigate(`/dashboard/profiles/${profileId}`)}>
 								View
+							</Button>
+						)}
+						{onDelete && (
+							<Button size='small' color='error' onClick={onDelete}>
+								Delete
 							</Button>
 						)}
 					</CardActions>

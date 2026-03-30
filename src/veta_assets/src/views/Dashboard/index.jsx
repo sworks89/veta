@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -15,14 +16,20 @@ import {
   TableRow,
   Paper,
   Avatar,
+  IconButton,
+  Tooltip,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import StorageIcon from '@mui/icons-material/Storage';
 import PersonIcon from '@mui/icons-material/Person';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import ShareIcon from '@mui/icons-material/Share';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import useVetaIdentity from '../../contexts/VetaIdentityContext';
 import useMainLayout from '../../layout/MainLayout/MainLayoutContext';
+import * as VetaWalletServices from '../../services/VetaWalletServices.ic';
 
 const StatCard = ({ title, value, icon, color = 'primary.main' }) => (
   <Card>
@@ -51,30 +58,37 @@ const CATEGORY_COLORS = {
 function getCategoryLabel(cat) {
   if (!cat) return 'unknown';
   if (typeof cat === 'string') return cat;
-  // Candid variant: { personal: null } → "personal"
-  const keys = Object.keys(cat);
-  return keys[0] || 'unknown';
+  return Object.keys(cat)[0] || 'unknown';
 }
 
 function Dashboard() {
-  const { principal, vetaWallet } = useVetaIdentity();
+  const { principal, vetaWallet, refreshWallet } = useVetaIdentity();
   const { gridSpacing } = useMainLayout();
   const navigate = useNavigate();
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const data = vetaWallet?.data || [];
   const profiles = vetaWallet?.profiles || [];
   const name = vetaWallet?.name || '';
   const verified = vetaWallet?.verified || false;
 
-  // Category breakdown
   const categories = {};
   data.forEach((d) => {
     const cat = getCategoryLabel(d.dataCategory);
     categories[cat] = (categories[cat] || 0) + 1;
   });
 
-  // Recent entries (last 10)
   const recentData = [...data].reverse().slice(0, 10);
+
+  const handleDeleteEntry = async (dataId) => {
+    try {
+      await VetaWalletServices.deleteDataEntry(principal, dataId);
+      await refreshWallet();
+      setSnackbar({ open: true, message: 'Entry deleted', severity: 'success' });
+    } catch (e) {
+      setSnackbar({ open: true, message: 'Failed to delete: ' + e.message, severity: 'error' });
+    }
+  };
 
   return (
     <Box>
@@ -87,30 +101,15 @@ function Dashboard() {
           : ''}
       </Typography>
 
-      {/* Stats */}
       <Grid container spacing={gridSpacing} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title='Data Entries'
-            value={data.length}
-            icon={<StorageIcon />}
-          />
+          <StatCard title='Data Entries' value={data.length} icon={<StorageIcon />} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title='Profiles'
-            value={profiles.length}
-            icon={<PersonIcon />}
-            color='secondary.main'
-          />
+          <StatCard title='Profiles' value={profiles.length} icon={<PersonIcon />} color='secondary.main' />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title='Categories'
-            value={Object.keys(categories).length}
-            icon={<ShareIcon />}
-            color='success.main'
-          />
+          <StatCard title='Categories' value={Object.keys(categories).length} icon={<ShareIcon />} color='success.main' />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
@@ -122,24 +121,16 @@ function Dashboard() {
         </Grid>
       </Grid>
 
-      {/* Quick Actions */}
       <Box sx={{ mb: 3, display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
-        <Button
-          variant='contained'
-          startIcon={<AddIcon />}
-          onClick={() => navigate('/dashboard/center')}>
+        <Button variant='contained' startIcon={<AddIcon />} onClick={() => navigate('/dashboard/center')}>
           Add Data
         </Button>
-        <Button
-          variant='outlined'
-          startIcon={<PersonIcon />}
-          onClick={() => navigate('/dashboard/profiles')}>
+        <Button variant='outlined' startIcon={<PersonIcon />} onClick={() => navigate('/dashboard/profiles')}>
           Manage Profiles
         </Button>
       </Box>
 
       <Grid container spacing={gridSpacing}>
-        {/* Recent Data */}
         <Grid item xs={12} md={8}>
           <Card>
             <CardContent>
@@ -166,6 +157,7 @@ function Dashboard() {
                         <TableCell>Type</TableCell>
                         <TableCell>Content</TableCell>
                         <TableCell>Category</TableCell>
+                        <TableCell align='right'>Actions</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -181,22 +173,19 @@ function Dashboard() {
                             <TableCell>
                               <Typography
                                 variant='body2'
-                                sx={{
-                                  maxWidth: 300,
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  whiteSpace: 'nowrap',
-                                }}>
+                                sx={{ maxWidth: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {d.dataContent}
                               </Typography>
                             </TableCell>
                             <TableCell>
-                              <Chip
-                                label={cat}
-                                size='small'
-                                color={CATEGORY_COLORS[cat] || 'default'}
-                                variant='outlined'
-                              />
+                              <Chip label={cat} size='small' color={CATEGORY_COLORS[cat] || 'default'} variant='outlined' />
+                            </TableCell>
+                            <TableCell align='right'>
+                              <Tooltip title='Delete'>
+                                <IconButton size='small' color='error' onClick={() => handleDeleteEntry(d.dataId)}>
+                                  <DeleteIcon fontSize='small' />
+                                </IconButton>
+                              </Tooltip>
                             </TableCell>
                           </TableRow>
                         );
@@ -209,7 +198,6 @@ function Dashboard() {
           </Card>
         </Grid>
 
-        {/* Category Breakdown */}
         <Grid item xs={12} md={4}>
           <Card>
             <CardContent>
@@ -223,17 +211,11 @@ function Dashboard() {
               ) : (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                   {Object.entries(categories).map(([cat, count]) => (
-                    <Box
-                      key={cat}
-                      sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box key={cat} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <Typography variant='body1' sx={{ textTransform: 'capitalize' }}>
                         {cat}
                       </Typography>
-                      <Chip
-                        label={count}
-                        size='small'
-                        color={CATEGORY_COLORS[cat] || 'default'}
-                      />
+                      <Chip label={count} size='small' color={CATEGORY_COLORS[cat] || 'default'} />
                     </Box>
                   ))}
                 </Box>
@@ -241,7 +223,6 @@ function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Profiles summary */}
           <Card sx={{ mt: gridSpacing }}>
             <CardContent>
               <Typography variant='h4' sx={{ mb: 2 }}>
@@ -253,14 +234,7 @@ function Dashboard() {
                 </Typography>
               ) : (
                 profiles.map((p, idx) => (
-                  <Box
-                    key={p.id || idx}
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      py: 0.5,
-                    }}>
+                  <Box key={p.id || idx} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 0.5 }}>
                     <Typography variant='body2'>{p.profileName}</Typography>
                     {p.isDefault && <Chip label='Default' size='small' variant='outlined' />}
                   </Box>
@@ -270,6 +244,16 @@ function Dashboard() {
           </Card>
         </Grid>
       </Grid>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        <Alert severity={snackbar.severity} variant='filled'>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
