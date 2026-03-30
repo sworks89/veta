@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { AuthClient } from "@dfinity/auth-client"
+import { AuthClient } from "@icp-sdk/auth/client"
 import { veta } from "../../../declarations/veta";
 import dfinityLogo from "../images/logo.png"
 

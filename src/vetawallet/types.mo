@@ -1,9 +1,7 @@
-import Bool "mo:base/Bool";
-import Text "mo:base/Text";
-import Principal "mo:base/Principal";
+import Principal "mo:core/Principal";
 
 module {
-	public type UID = Text;
+  public type UID = Text;
   public type UserId = Principal;
   public type PlatformId = Principal;
   public type Timestamp = Int;
@@ -16,14 +14,14 @@ module {
 
   public type NewUserData = {
     name: Text;
-	  verified: Bool;
+    verified: Bool;
     profiles: [Profile];
     data: [Data];
   };
 
   public type UserData = {
     id: UserId;
-	  verified: Bool;
+    verified: Bool;
     name: Text;
     profiles: [Profile];
     data: [Data];
@@ -54,6 +52,6 @@ module {
     profileName: Text;
     isDefault: Bool;
     data: [Data];
-		userId: UserId;
+    userId: UserId;
   };
 };

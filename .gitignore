@@ -1,20 +1,34 @@
-# Various IDEs and Editors
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# IC / ICP CLI
+.dfx/
+.icp/cache/
+src/declarations/
+src/bindings/
+
+# Environment
+.env
+.env.local
+
+# IDE
 .vscode/
 .idea/
-**/*~
 
-# Mac OSX temporary files
+# OS
 .DS_Store
 **/.DS_Store
 
-# dfx temporary files
-.dfx/
+# Logs
+*.log
 
-# frontend code
-node_modules/
-dist/
-src/declarations/
+# Test coverage
+coverage/
 
-
+# Temp files
+**/*~
 **/*.original
 **/*.old

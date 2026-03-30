@@ -1,0 +1,20 @@
+canisters:
+  - name: vetawallet
+    recipe:
+      type: "@dfinity/motoko@v4.1.0"
+      configuration:
+        main: src/vetawallet/main.mo
+
+  - name: veta_assets
+    recipe:
+      type: "@dfinity/asset-canister@v2.1.0"
+      configuration:
+        dir: dist/veta_assets
+        build:
+          - npm install
+          - npm run build
+
+networks:
+  - name: local
+    mode: managed
+    ii: true
