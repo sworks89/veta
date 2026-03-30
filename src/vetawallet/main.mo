@@ -27,6 +27,19 @@ persistent actor VetaWallet {
     };
   };
 
+  private func requireOwner(caller : Principal, ownerId : Principal) {
+    requireAuthenticated(caller);
+    if (caller != ownerId) {
+      Runtime.trap("caller does not own this record");
+    };
+  };
+
+  private func validateText(value : Text, maxLen : Nat, label : Text) {
+    if (value.size() > maxLen) {
+      Runtime.trap(label # " exceeds max length");
+    };
+  };
+
   // ── Healthcheck ────────────────────────────────────────────────────
 
   public func healthcheck() : async Bool { true };
@@ -35,6 +48,7 @@ persistent actor VetaWallet {
 
   public shared(msg) func create(userData : UserData) : async () {
     requireAuthenticated(msg.caller);
+    validateText(userData.name, 128, "name");
     let stored : UserData = {
       id = msg.caller;
       verified = false;
@@ -46,7 +60,14 @@ persistent actor VetaWallet {
   };
 
   public shared(msg) func update(userData : UserData) : async () {
-    requireAuthenticated(msg.caller);
+    requireOwner(msg.caller, userData.id);
+    validateText(userData.name, 128, "name");
+    if (userData.data.size() > 1000) {
+      Runtime.trap("data array exceeds max size");
+    };
+    if (userData.profiles.size() > 50) {
+      Runtime.trap("profiles array exceeds max size");
+    };
     Map.add(userDB, Principal.compare, userData.id, userData);
   };
 
