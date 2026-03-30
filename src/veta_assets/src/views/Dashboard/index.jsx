@@ -1,183 +1,277 @@
-import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Link from '@mui/material/Link';
-import { Button } from '@mui/material';
-import { Paper, Card } from '@mui/material';
-import * as Crypto from '../../utils/crypto';
+import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Avatar,
+} from '@mui/material';
+import StorageIcon from '@mui/icons-material/Storage';
+import PersonIcon from '@mui/icons-material/Person';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import ShareIcon from '@mui/icons-material/Share';
+import AddIcon from '@mui/icons-material/Add';
 import useVetaIdentity from '../../contexts/VetaIdentityContext';
-import { getVetaWalletActor } from '../../services/actor';
+import useMainLayout from '../../layout/MainLayout/MainLayoutContext';
 
-const apiUrl = 'https://us-central1-thanhpage-d.cloudfunctions.net/api/v1';
+const StatCard = ({ title, value, icon, color = 'primary.main' }) => (
+  <Card>
+    <CardContent>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box>
+          <Typography variant='body2' color='text.secondary'>
+            {title}
+          </Typography>
+          <Typography variant='h3' sx={{ mt: 0.5, color }}>
+            {value}
+          </Typography>
+        </Box>
+        <Avatar sx={{ bgcolor: color, width: 48, height: 48, opacity: 0.8 }}>{icon}</Avatar>
+      </Box>
+    </CardContent>
+  </Card>
+);
 
-function Copyright(props) {
-	return (
-		<Typography variant='body2' color='text.secondary' align='center' {...props}>
-			{'Copyright © '}
-			<Link color='inherit' href='https://k3gdk-giaaa-aaaaj-aivfa-cai.ic0.app/'>
-				Veta
-			</Link>{' '}
-			2022
-		</Typography>
-	);
-}
+const CATEGORY_COLORS = {
+  personal: 'primary',
+  social: 'secondary',
+  financial: 'success',
+};
 
-function Onboard(props) {
-	const { kycUrl } = props;
-	return (
-		<iframe
-			style={{
-				width: '100%',
-				height: '60vh',
-			}}
-			className='iframe-kyc'
-			src={kycUrl}
-			allow='camera'></iframe>
-	);
+function getCategoryLabel(cat) {
+  if (!cat) return 'unknown';
+  if (typeof cat === 'string') return cat;
+  // Candid variant: { personal: null } → "personal"
+  const keys = Object.keys(cat);
+  return keys[0] || 'unknown';
 }
 
 function Dashboard() {
-	const { principal, vetaWallet, refreshWallet } = useVetaIdentity();
+  const { principal, vetaWallet } = useVetaIdentity();
+  const { gridSpacing } = useMainLayout();
+  const navigate = useNavigate();
 
-	const [userData, setUserData] = useState();
-	const [encrypted, setEncrypted] = useState(null);
-	const [session, setSession] = useState(null);
-	const [kycUrl, setKycUrl] = useState('');
-	const kycResultTimer = useRef();
+  const data = vetaWallet?.data || [];
+  const profiles = vetaWallet?.profiles || [];
+  const name = vetaWallet?.name || '';
+  const verified = vetaWallet?.verified || false;
 
-	useEffect(() => {
-		if (vetaWallet) {
-			setUserData(vetaWallet);
-		}
-	}, [vetaWallet]);
+  // Category breakdown
+  const categories = {};
+  data.forEach((d) => {
+    const cat = getCategoryLabel(d.dataCategory);
+    categories[cat] = (categories[cat] || 0) + 1;
+  });
 
-	useEffect(() => {
-		return () => {
-			if (kycResultTimer.current) {
-				clearInterval(kycResultTimer.current);
-			}
-		};
-	}, []);
+  // Recent entries (last 10)
+  const recentData = [...data].reverse().slice(0, 10);
 
-	const onboard = async () => {
-		await axios.get(`${apiUrl}/identomat/getSession`).then((resp) => {
-			setSession(resp.data);
-			setKycUrl(`https://widget.identomat.com/?session_token=${resp.data}`);
-		});
-	};
+  return (
+    <Box>
+      <Typography variant='h2' sx={{ mb: 0.5 }}>
+        {name ? `Welcome back, ${name}` : 'Dashboard'}
+      </Typography>
+      <Typography variant='body2' color='text.secondary' sx={{ mb: 3 }}>
+        {principal
+          ? `${principal.toString().substring(0, 8)}...${principal.toString().slice(-5)}`
+          : ''}
+      </Typography>
 
-	const getKycResult = async () => {
-		const actor = getVetaWalletActor();
-		if (!actor || !principal) return;
+      {/* Stats */}
+      <Grid container spacing={gridSpacing} sx={{ mb: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            title='Data Entries'
+            value={data.length}
+            icon={<StorageIcon />}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            title='Profiles'
+            value={profiles.length}
+            icon={<PersonIcon />}
+            color='secondary.main'
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            title='Categories'
+            value={Object.keys(categories).length}
+            icon={<ShareIcon />}
+            color='success.main'
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            title='Status'
+            value={verified ? 'Verified' : 'Unverified'}
+            icon={<VerifiedUserIcon />}
+            color={verified ? 'success.main' : 'warning.main'}
+          />
+        </Grid>
+      </Grid>
 
-		const { data } = await axios.get(`${apiUrl}/identomat/result/${session}`);
-		const { result } = data;
+      {/* Quick Actions */}
+      <Box sx={{ mb: 3, display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+        <Button
+          variant='contained'
+          startIcon={<AddIcon />}
+          onClick={() => navigate('/dashboard/center')}>
+          Add Data
+        </Button>
+        <Button
+          variant='outlined'
+          startIcon={<PersonIcon />}
+          onClick={() => navigate('/dashboard/profiles')}>
+          Manage Profiles
+        </Button>
+      </Box>
 
-		if (result == 'approved') {
-			const { person } = data;
-			const { first_name } = person;
+      <Grid container spacing={gridSpacing}>
+        {/* Recent Data */}
+        <Grid item xs={12} md={8}>
+          <Card>
+            <CardContent>
+              <Typography variant='h4' sx={{ mb: 2 }}>
+                Recent Data Entries
+              </Typography>
+              {recentData.length === 0 ? (
+                <Typography color='text.secondary' sx={{ py: 3, textAlign: 'center' }}>
+                  No data yet. Go to{' '}
+                  <Typography
+                    component='span'
+                    color='primary'
+                    sx={{ cursor: 'pointer' }}
+                    onClick={() => navigate('/dashboard/center')}>
+                    Data Center
+                  </Typography>{' '}
+                  to add your first entry.
+                </Typography>
+              ) : (
+                <TableContainer component={Paper} variant='outlined'>
+                  <Table size='small'>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Type</TableCell>
+                        <TableCell>Content</TableCell>
+                        <TableCell>Category</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {recentData.map((d, idx) => {
+                        const cat = getCategoryLabel(d.dataCategory);
+                        return (
+                          <TableRow key={d.dataId || idx}>
+                            <TableCell>
+                              <Typography variant='body2' fontWeight={600}>
+                                {d.dataType}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography
+                                variant='body2'
+                                sx={{
+                                  maxWidth: 300,
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                }}>
+                                {d.dataContent}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Chip
+                                label={cat}
+                                size='small'
+                                color={CATEGORY_COLORS[cat] || 'default'}
+                                variant='outlined'
+                              />
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
 
-			setKycUrl('');
-			let _userData = await actor.get(principal);
-			_userData = { ..._userData, verified: true, name: first_name };
-			await actor.update(_userData);
-			setUserData(_userData);
-			refreshWallet();
-			if (kycResultTimer.current) {
-				clearInterval(kycResultTimer.current);
-			}
-		}
-	};
+        {/* Category Breakdown */}
+        <Grid item xs={12} md={4}>
+          <Card>
+            <CardContent>
+              <Typography variant='h4' sx={{ mb: 2 }}>
+                By Category
+              </Typography>
+              {Object.keys(categories).length === 0 ? (
+                <Typography color='text.secondary' sx={{ py: 3, textAlign: 'center' }}>
+                  No data yet.
+                </Typography>
+              ) : (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                  {Object.entries(categories).map(([cat, count]) => (
+                    <Box
+                      key={cat}
+                      sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant='body1' sx={{ textTransform: 'capitalize' }}>
+                        {cat}
+                      </Typography>
+                      <Chip
+                        label={count}
+                        size='small'
+                        color={CATEGORY_COLORS[cat] || 'default'}
+                      />
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </CardContent>
+          </Card>
 
-	useEffect(() => {
-		if (kycUrl) {
-			kycResultTimer.current = setInterval(() => {
-				getKycResult();
-			}, 2000);
-		}
-	}, [kycUrl]);
-
-	const skipKyc = async () => {
-		const actor = getVetaWalletActor();
-		if (!actor || !principal) return;
-
-		setSession(null);
-		let _userData = await actor.get(principal);
-		_userData = { ..._userData, verified: true, name: 'Anon' };
-		await actor.update(_userData);
-		setUserData(_userData);
-		refreshWallet();
-	};
-
-	const getUserData = async () => {
-		const actor = getVetaWalletActor();
-		if (!actor || !principal) return;
-
-		const res = await actor.get(principal);
-		setUserData(res);
-	};
-
-	const signData = () => {
-		const signature = Crypto.signData('hello');
-		console.log('Signature:', signature);
-	};
-
-	const encryptData = () => {
-		const test = { id: 1, interest: 'basketball' };
-		const encryptedData = Crypto.encryptData(test);
-		setEncrypted(encryptedData);
-		console.log('Encrypted:', encryptedData);
-	};
-
-	const decryptData = () => {
-		const decrypted = Crypto.decryptData(encrypted);
-		console.log('Decrypted:', decrypted);
-	};
-
-	return (
-		<Box
-			component='main'
-			sx={{
-				backgroundColor: (theme) =>
-					theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
-				flexGrow: 1,
-				height: '100vh',
-				overflow: 'auto',
-			}}>
-			<Toolbar />
-			<Container maxWidth='lg' sx={{ mt: 4, mb: 4 }}>
-				<Paper>
-					<Card>
-						<span>Onboard now to get started. </span>
-						<Button onClick={onboard}>KYC Onboarding</Button>
-						<Button onClick={skipKyc}>Skip KYC</Button>
-						<Button onClick={getUserData}>Get User Data</Button>
-						<Button onClick={signData}>Test Signature</Button>
-						<Button onClick={encryptData}>Test Encrypt</Button>
-						<Button onClick={decryptData}>Test Decrypt</Button>
-					</Card>
-					<Card>{kycUrl && <Onboard kycUrl={kycUrl}></Onboard>}</Card>
-					<Card>
-						{userData && (
-							<span>{`${userData.id} ${userData.name} - verified: ${userData.verified}`}</span>
-						)}
-					</Card>
-					<Card>
-						{userData?.data?.map((d, idx) => (
-							<div key={idx}>
-								<p>{d.dataType}</p>
-								<p>{d.dataContent}</p>
-							</div>
-						))}
-					</Card>
-				</Paper>
-				<Copyright sx={{ pt: 4 }} />
-			</Container>
-		</Box>
-	);
+          {/* Profiles summary */}
+          <Card sx={{ mt: gridSpacing }}>
+            <CardContent>
+              <Typography variant='h4' sx={{ mb: 2 }}>
+                Profiles
+              </Typography>
+              {profiles.length === 0 ? (
+                <Typography color='text.secondary' sx={{ textAlign: 'center' }}>
+                  No profiles yet.
+                </Typography>
+              ) : (
+                profiles.map((p, idx) => (
+                  <Box
+                    key={p.id || idx}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      py: 0.5,
+                    }}>
+                    <Typography variant='body2'>{p.profileName}</Typography>
+                    {p.isDefault && <Chip label='Default' size='small' variant='outlined' />}
+                  </Box>
+                ))
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </Box>
+  );
 }
 
 export default Dashboard;

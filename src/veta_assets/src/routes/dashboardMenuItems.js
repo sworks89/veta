@@ -1,4 +1,4 @@
-import { IconDashboard, IconBrandChrome, IconHelp, IconSocial, IconWallet, IconUser, IconQrcode, IconActivity } from '@tabler/icons';
+import { IconDashboard, IconBrandChrome, IconHelp, IconSocial, IconWallet, IconUser, IconQrcode, IconActivity, IconDatabase } from '@tabler/icons';
  
 
 const dashboard = {
@@ -12,6 +12,14 @@ const dashboard = {
 			type: 'item',
 			url: 'dashboard',
 			icon: IconDashboard,
+			breadcrumbs: false,
+		},
+		{
+			id: 'datacenter',
+			title: 'Data Center',
+			type: 'item',
+			url: 'dashboard/center',
+			icon: IconDatabase,
 			breadcrumbs: false,
 		},
 		{

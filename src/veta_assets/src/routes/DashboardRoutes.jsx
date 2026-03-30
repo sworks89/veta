@@ -8,6 +8,7 @@ import Dashboard from '../views/Dashboard';
 import HelpPage from '../views/Help';
 import CryppoPlatformPage from '../views/Platforms/Cryppo';
 import SocialNetworkPlatformPage from '../views/Platforms/SocialNetwork';
+import DataCenter from '../views/DataCenter';
 import ProfilesPage from '../views/Profiles';
 import QrCodePage from '../views/QrCode';
 import WalletPage from '../views/Wallet';
@@ -27,6 +28,10 @@ const DashboardRoutes = {
 		{
 			path: 'dashboard',
 			element: <Dashboard />,
+		},
+		{
+			path: 'dashboard/center',
+			element: <DataCenter />,
 		},
 		{
 			path: 'dashboard/profiles',

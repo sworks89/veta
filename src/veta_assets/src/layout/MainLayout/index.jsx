@@ -16,6 +16,7 @@ import useMainLayout from './MainLayoutContext';
 import Customization from '../Customization';
 import dashboardMenuItems from '../../routes/dashboardMenuItems';
 import useVetaIdentity from '../../contexts/VetaIdentityContext';
+import OnboardingDialog from '../../components/OnboardingDialog';
 
 // styles
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -124,12 +125,13 @@ const MainLayout = () => {
 					title
 					rightAlign
 				/>
+				<OnboardingDialog />
 				{vetaWallet ? (
 					<Outlet />
-				) : ( 
+				) : (
 						<Typography variant='h4' component='h4' sx={{ textAlign: 'center', mt: 5 }}>
 							Please connect your identity.
-						</Typography> 
+						</Typography>
 				)}
 			</Main>
 			{/* <Customization /> */}
